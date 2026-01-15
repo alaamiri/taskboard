@@ -1,0 +1,266 @@
+<mxfile host="app.diagrams.net" modified="2024-01-15T12:00:00.000Z" agent="Mozilla/5.0" version="22.1.0" etag="laravel-architecture">
+  <diagram id="laravel-uml" name="Architecture Laravel">
+    <mxGraphModel dx="1434" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- TITRE -->
+        <mxCell id="title" value="ARCHITECTURE LARAVEL - TASKBOARD" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ROUTES BOX -->
+        <mxCell id="routes-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="1200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="routes-title" value="ROUTES (web.php)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="600" y="85" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="routes-content" value="Route::resource('boards', BoardController::class)&#xa;Route::post('/boards/{board}/columns', [ColumnController::class, 'store'])&#xa;Route::post('/columns/{column}/cards', [CardController::class, 'store'])" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Courier New" vertex="1" parent="1">
+          <mxGeometry x="250" y="105" width="900" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW ROUTES TO CONTROLLERS -->
+        <mxCell id="arrow1" value="dispatch vers" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="160" as="sourcePoint" />
+            <mxPoint x="700" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- CONTROLLERS -->
+        <mxCell id="controllers-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="1200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="controllers-title" value="CONTROLLERS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="600" y="205" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- BoardController -->
+        <mxCell id="board-controller" value="BoardController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="150" y="240" width="200" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="board-controller-attrs" value="+ index()&#xa;+ create()&#xa;+ store(Request)&#xa;+ show(Board)&#xa;+ edit(Board)&#xa;+ update(Board)&#xa;+ destroy(Board)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="board-controller">
+          <mxGeometry y="26" width="200" height="114" as="geometry" />
+        </mxCell>
+
+        <!-- ColumnController -->
+        <mxCell id="column-controller" value="ColumnController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="600" y="240" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="column-controller-attrs" value="+ store(Board)&#xa;+ update(Column)&#xa;+ destroy(Column)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="column-controller">
+          <mxGeometry y="26" width="200" height="74" as="geometry" />
+        </mxCell>
+
+        <!-- CardController -->
+        <mxCell id="card-controller" value="CardController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="240" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="card-controller-attrs" value="+ store(Column)&#xa;+ update(Card)&#xa;+ destroy(Card)&#xa;+ move(Card)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="card-controller">
+          <mxGeometry y="26" width="200" height="94" as="geometry" />
+        </mxCell>
+
+        <!-- Controller Base -->
+        <mxCell id="base-controller" value="Controller (Laravel)" style="swimlane;fontStyle=3;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="550" y="360" width="300" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Extends arrows to base controller -->
+        <mxCell id="extends1" value="" style="endArrow=block;endSize=16;endFill=0;html=1;exitX=0.5;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="250" y="380" as="sourcePoint" />
+            <mxPoint x="550" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="250" y="420" />
+              <mxPoint x="480" y="420" />
+              <mxPoint x="480" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="extends2" value="" style="endArrow=block;endSize=16;endFill=0;html=1;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="700" y="340" as="sourcePoint" />
+            <mxPoint x="700" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="extends3" value="" style="endArrow=block;endSize=16;endFill=0;html=1;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1150" y="360" as="sourcePoint" />
+            <mxPoint x="850" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1150" y="420" />
+              <mxPoint x="920" y="420" />
+              <mxPoint x="920" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ARROW CONTROLLERS TO MODELS -->
+        <mxCell id="arrow2" value="utilise" style="endArrow=classic;html=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="400" as="sourcePoint" />
+            <mxPoint x="700" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MODELS -->
+        <mxCell id="models-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="100" y="450" width="1200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="models-title" value="MODELS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="600" y="455" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Board Model -->
+        <mxCell id="board-model" value="Board" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="150" y="490" width="200" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="board-model-attrs" value="# fillable:&#xa;  - name&#xa;  - description&#xa;  - user_id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="board-model">
+          <mxGeometry y="26" width="200" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="board-model-sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="board-model">
+          <mxGeometry y="90" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="board-model-methods" value="+ user(): BelongsTo&#xa;+ columns(): HasMany" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="board-model">
+          <mxGeometry y="98" width="200" height="62" as="geometry" />
+        </mxCell>
+
+        <!-- Column Model -->
+        <mxCell id="column-model" value="Column" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="600" y="490" width="200" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="column-model-attrs" value="# fillable:&#xa;  - name&#xa;  - position&#xa;  - board_id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="column-model">
+          <mxGeometry y="26" width="200" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="column-model-sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="column-model">
+          <mxGeometry y="90" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="column-model-methods" value="+ board(): BelongsTo&#xa;+ cards(): HasMany" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="column-model">
+          <mxGeometry y="98" width="200" height="62" as="geometry" />
+        </mxCell>
+
+        <!-- Card Model -->
+        <mxCell id="card-model" value="Card" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="490" width="200" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="card-model-attrs" value="# fillable:&#xa;  - title, description&#xa;  - position&#xa;  - column_id, user_id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="card-model">
+          <mxGeometry y="26" width="200" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="card-model-sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="card-model">
+          <mxGeometry y="90" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="card-model-methods" value="+ column(): BelongsTo&#xa;+ user(): BelongsTo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11" vertex="1" parent="card-model">
+          <mxGeometry y="98" width="200" height="62" as="geometry" />
+        </mxCell>
+
+        <!-- Model Base -->
+        <mxCell id="base-model" value="Model (Laravel)&#xa;+ all(), find(), create(), update(), delete(), where(), with()" style="swimlane;fontStyle=3;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Relations arrows between models -->
+        <mxCell id="rel1" value="hasMany" style="endArrow=open;endSize=12;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="350" y="570" as="sourcePoint" />
+            <mxPoint x="600" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel2" value="hasMany" style="endArrow=open;endSize=12;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="800" y="570" as="sourcePoint" />
+            <mxPoint x="1050" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ARROW MODELS TO MIGRATIONS -->
+        <mxCell id="arrow3" value="mappé par" style="endArrow=classic;html=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="710" as="sourcePoint" />
+            <mxPoint x="700" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MIGRATIONS -->
+        <mxCell id="migrations-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="100" y="750" width="1200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="migrations-title" value="MIGRATIONS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="600" y="755" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Migration boxes -->
+        <mxCell id="mig1" value="create_boards_table&#xa;+ up(): void&#xa;+ down(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="180" y="785" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mig2" value="create_columns_table&#xa;+ up(): void&#xa;+ down(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="625" y="785" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mig3" value="create_cards_table&#xa;+ up(): void&#xa;+ down(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="1075" y="785" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ARROW MIGRATIONS TO DATABASE -->
+        <mxCell id="arrow4" value="crée dans" style="endArrow=classic;html=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="850" as="sourcePoint" />
+            <mxPoint x="700" y="890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- DATABASE -->
+        <mxCell id="db-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="100" y="890" width="1200" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="db-title" value="POSTGRESQL TABLES" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="600" y="895" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Table boxes -->
+        <mxCell id="tbl1" value="boards&#xa;─────────&#xa;PK id&#xa;FK user_id&#xa;name&#xa;description&#xa;timestamps" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;fontSize=10;spacingLeft=5" vertex="1" parent="1">
+          <mxGeometry x="180" y="925" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl2" value="columns&#xa;─────────&#xa;PK id&#xa;FK board_id&#xa;name&#xa;position&#xa;timestamps" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;fontSize=10;spacingLeft=5" vertex="1" parent="1">
+          <mxGeometry x="640" y="925" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl3" value="cards&#xa;─────────&#xa;PK id&#xa;FK column_id&#xa;FK user_id&#xa;title, description&#xa;position, timestamps" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;align=left;fontSize=10;spacingLeft=5" vertex="1" parent="1">
+          <mxGeometry x="1075" y="925" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- FK arrows -->
+        <mxCell id="fk1" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;startFill=0;endFill=0" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="300" y="975" as="sourcePoint" />
+            <mxPoint x="640" y="975" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fk2" value="1:N" style="endArrow=ERmany;startArrow=ERone;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;startFill=0;endFill=0" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="760" y="975" as="sourcePoint" />
+            <mxPoint x="1075" y="975" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- PAGES REACT -->
+        <mxCell id="pages-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#deebf7;strokeColor=#5b9bd5;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1060" width="1200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="pages-title" value="PAGES REACT (JSX) - resources/js/Pages/" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="500" y="1065" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Page boxes -->
+        <mxCell id="page1" value="Boards/Index.jsx&#xa;────────────&#xa;Liste des boards&#xa;◄── GET /boards" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b9bd5;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="180" y="1095" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="page2" value="Boards/Create.jsx&#xa;────────────&#xa;Formulaire création&#xa;◄── GET /boards/create" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b9bd5;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="625" y="1095" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="page3" value="Boards/Show.jsx&#xa;────────────&#xa;Board + colonnes + cartes&#xa;◄── GET /boards/{id}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#5b9bd5;align=center;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1095" width="150" height="70" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
