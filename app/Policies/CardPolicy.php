@@ -3,64 +3,40 @@
 namespace App\Policies;
 
 use App\Models\Card;
+use App\Models\Column;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CardPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * L'utilisateur peut-il créer une carte dans cette colonne ?
      */
-    public function viewAny(User $user): bool
+    public function create(User $user, Column $column): bool
     {
-        return false;
+        return $user->id === $column->board->user_id;
     }
 
     /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Card $card): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
+     * L'utilisateur peut-il modifier cette carte ?
      */
     public function update(User $user, Card $card): bool
     {
-        return false;
+        return $user->id === $card->column->board->user_id;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * L'utilisateur peut-il supprimer cette carte ?
      */
     public function delete(User $user, Card $card): bool
     {
-        return false;
+        return $user->id === $card->column->board->user_id;
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * L'utilisateur peut-il déplacer cette carte ?
      */
-    public function restore(User $user, Card $card): bool
+    public function move(User $user, Card $card): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Card $card): bool
-    {
-        return false;
+        return $user->id === $card->column->board->user_id;
     }
 }

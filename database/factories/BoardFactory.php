@@ -15,4 +15,5 @@ class BoardFactory extends Factory
             'user_id' => User::factory()
         ];
     }
+
 }

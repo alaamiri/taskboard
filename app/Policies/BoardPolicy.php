@@ -4,63 +4,46 @@ namespace App\Policies;
 
 use App\Models\Board;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class BoardPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * L'utilisateur peut-il voir la liste des boards ?
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // Tout utilisateur connecté peut voir sa liste
     }
 
     /**
-     * Determine whether the user can view the model.
+     * L'utilisateur peut-il voir ce board ?
      */
     public function view(User $user, Board $board): bool
     {
-        return false;
+        return $user->id === $board->user_id;
     }
 
     /**
-     * Determine whether the user can create models.
+     * L'utilisateur peut-il créer un board ?
      */
     public function create(User $user): bool
     {
-        return false;
+        return true; // Tout utilisateur connecté peut créer
     }
 
     /**
-     * Determine whether the user can update the model.
+     * L'utilisateur peut-il modifier ce board ?
      */
     public function update(User $user, Board $board): bool
     {
-        return false;
+        return $user->id === $board->user_id;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * L'utilisateur peut-il supprimer ce board ?
      */
     public function delete(User $user, Board $board): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Board $board): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Board $board): bool
-    {
-        return false;
+        return $user->id === $board->user_id;
     }
 }
