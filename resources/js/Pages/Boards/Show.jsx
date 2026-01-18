@@ -7,166 +7,47 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
-    DragOverlay,
-    useDroppable
+    DragOverlay
 } from '@dnd-kit/core';
-import {
-    SortableContext,
-    verticalListSortingStrategy,
-    useSortable,
-    arrayMove
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { arrayMove } from '@dnd-kit/sortable';
 
-// Composant Card draggable
-function SortableCard({ card, onDelete }) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({
-        id: `card-${card.id}`,
-        data: {
-            type: 'card',
-            card
-        }
-    });
+// Composants
+import Column from '@/Components/Board/Column';
+import ColumnForm from '@/Components/Board/ColumnForm';
+import ImportForm from '@/Components/Board/ImportForm';
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1
-    };
-
-    return (
-        <div
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className="bg-white p-3 rounded shadow cursor-grab active:cursor-grabbing"
-        >
-            <div className="flex justify-between">
-                <span>{card.title}</span>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(card.id);
-                    }}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                >
-                    ✕
-                </button>
-            </div>
-            {card.description && (
-                <p className="text-gray-500 text-sm mt-1">{card.description}</p>
-            )}
-        </div>
-    );
-}
-
-// Composant Column avec zone droppable
-function Column({ column, onDeleteColumn, onDeleteCard, onAddCard, activeColumnId, setActiveColumnId, cardForm }) {
-    const { setNodeRef, isOver } = useDroppable({
-        id: `column-${column.id}`,
-        data: {
-            type: 'column',
-            column
-        }
-    });
-
-    const cardIds = column.cards?.map(card => `card-${card.id}`) || [];
-
-    return (
-        <div
-            ref={setNodeRef}
-            className={`bg-gray-100 rounded p-4 min-w-[280px] max-w-[280px] ${isOver ? 'ring-2 ring-blue-400' : ''}`}
-        >
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">{column.name}</h3>
-                <button
-                    onClick={() => onDeleteColumn(column.id)}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                >
-                    ✕
-                </button>
-            </div>
-
-            <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-                <div className="space-y-2 mb-4 min-h-[50px]">
-                    {column.cards?.map((card) => (
-                        <SortableCard
-                            key={card.id}
-                            card={card}
-                            onDelete={onDeleteCard}
-                        />
-                    ))}
-                </div>
-            </SortableContext>
-
-            {activeColumnId === column.id ? (
-                <form onSubmit={(e) => onAddCard(e, column.id)}>
-                    <input
-                        type="text"
-                        value={cardForm.data.title}
-                        onChange={(e) => cardForm.setData('title', e.target.value)}
-                        placeholder="Titre de la carte"
-                        className="w-full border rounded px-2 py-1 mb-2 text-sm"
-                        autoFocus
-                    />
-                    <div className="flex gap-2">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
-                        >
-                            Ajouter
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setActiveColumnId(null)}
-                            className="px-2 py-1 text-sm"
-                        >
-                            Annuler
-                        </button>
-                    </div>
-                </form>
-            ) : (
-                <button
-                    onClick={() => setActiveColumnId(column.id)}
-                    className="text-gray-500 hover:text-gray-700 text-sm"
-                >
-                    + Ajouter une carte
-                </button>
-            )}
-        </div>
-    );
-}
+// Hooks
+import useBoardChannel from '@/hooks/useBoardChannel';
 
 export default function Show({ board }) {
+    // State
     const [columns, setColumns] = useState(board.columns || []);
     const [showColumnForm, setShowColumnForm] = useState(false);
+    const [showImportForm, setShowImportForm] = useState(false);
     const [activeColumnId, setActiveColumnId] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
 
+    // Forms
     const columnForm = useForm({ name: '' });
     const cardForm = useForm({ title: '', description: '' });
+    const importForm = useForm({ file: null });
 
-    // Met à jour les colonnes quand board change
+    // WebSocket
+    useBoardChannel(board.id);
+
+    // Sync columns with board
     useEffect(() => {
         setColumns(board.columns || []);
     }, [board]);
 
+    // DnD Sensors
     const sensors = useSensors(
         useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 8
-            }
+            activationConstraint: { distance: 8 }
         })
     );
 
+    // Actions
     function addColumn(e) {
         e.preventDefault();
         columnForm.post(route('columns.store', board.id), {
@@ -199,28 +80,26 @@ export default function Show({ board }) {
         }
     }
 
-    // Trouve la colonne qui contient une carte
+    // DnD Helpers
     function findColumnByCardId(cardId) {
         return columns.find(column =>
             column.cards?.some(card => `card-${card.id}` === cardId)
         );
     }
 
-    // Extrait l'ID numérique d'une carte
     function getCardNumericId(cardId) {
         return parseInt(cardId.replace('card-', ''));
     }
 
-    // Extrait l'ID numérique d'une colonne
     function getColumnNumericId(columnId) {
         return parseInt(columnId.replace('column-', ''));
     }
 
+    // DnD Handlers
     function handleDragStart(event) {
-        const { active } = event;
-        const activeColumn = findColumnByCardId(active.id);
+        const activeColumn = findColumnByCardId(event.active.id);
         if (activeColumn) {
-            const card = activeColumn.cards.find(c => `card-${c.id}` === active.id);
+            const card = activeColumn.cards.find(c => `card-${c.id}` === event.active.id);
             setActiveCard(card);
         }
     }
@@ -232,7 +111,6 @@ export default function Show({ board }) {
         const activeId = active.id;
         const overId = over.id;
 
-        // Ignore si on survole le même élément
         if (activeId === overId) return;
 
         const isActiveCard = activeId.toString().startsWith('card-');
@@ -242,47 +120,33 @@ export default function Show({ board }) {
         if (!isActiveCard) return;
 
         const activeColumn = findColumnByCardId(activeId);
-        let overColumn = null;
+        let overColumn = isOverCard
+            ? findColumnByCardId(overId)
+            : columns.find(col => col.id === getColumnNumericId(overId));
 
-        if (isOverCard) {
-            overColumn = findColumnByCardId(overId);
-        } else if (isOverColumn) {
-            overColumn = columns.find(col => col.id === getColumnNumericId(overId));
-        }
+        if (!activeColumn || !overColumn || activeColumn.id === overColumn.id) return;
 
-        if (!activeColumn || !overColumn) return;
+        setColumns(prev => {
+            const activeCards = [...(activeColumn.cards || [])];
+            const overCards = [...(overColumn.cards || [])];
+            const activeCardIndex = activeCards.findIndex(c => `card-${c.id}` === activeId);
 
-        // Si on déplace vers une autre colonne
-        if (activeColumn.id !== overColumn.id) {
-            setColumns(prev => {
-                const activeCards = [...(activeColumn.cards || [])];
-                const overCards = [...(overColumn.cards || [])];
+            if (activeCardIndex === -1) return prev;
 
-                const activeCardIndex = activeCards.findIndex(c => `card-${c.id}` === activeId);
-                if (activeCardIndex === -1) return prev;
+            const [movedCard] = activeCards.splice(activeCardIndex, 1);
+            let insertIndex = isOverCard
+                ? overCards.findIndex(c => `card-${c.id}` === overId)
+                : overCards.length;
 
-                const [movedCard] = activeCards.splice(activeCardIndex, 1);
+            if (insertIndex === -1) insertIndex = overCards.length;
+            overCards.splice(insertIndex, 0, movedCard);
 
-                // Trouve la position d'insertion
-                let insertIndex = overCards.length;
-                if (isOverCard) {
-                    insertIndex = overCards.findIndex(c => `card-${c.id}` === overId);
-                    if (insertIndex === -1) insertIndex = overCards.length;
-                }
-
-                overCards.splice(insertIndex, 0, movedCard);
-
-                return prev.map(col => {
-                    if (col.id === activeColumn.id) {
-                        return { ...col, cards: activeCards };
-                    }
-                    if (col.id === overColumn.id) {
-                        return { ...col, cards: overCards };
-                    }
-                    return col;
-                });
+            return prev.map(col => {
+                if (col.id === activeColumn.id) return { ...col, cards: activeCards };
+                if (col.id === overColumn.id) return { ...col, cards: overCards };
+                return col;
             });
-        }
+        });
     }
 
     function handleDragEnd(event) {
@@ -293,19 +157,15 @@ export default function Show({ board }) {
 
         const activeId = active.id;
         const overId = over.id;
-
         const isActiveCard = activeId.toString().startsWith('card-');
         const isOverCard = overId.toString().startsWith('card-');
-        const isOverColumn = overId.toString().startsWith('column-');
 
         if (!isActiveCard) return;
 
         const activeColumn = findColumnByCardId(activeId);
 
-        // Réorganisation dans la même colonne
         if (isOverCard && activeColumn) {
             const overColumnSame = findColumnByCardId(overId);
-
             if (overColumnSame && activeColumn.id === overColumnSame.id) {
                 const cardIds = activeColumn.cards.map(c => `card-${c.id}`);
                 const oldIndex = cardIds.indexOf(activeId);
@@ -315,10 +175,7 @@ export default function Show({ board }) {
                     setColumns(prev =>
                         prev.map(col => {
                             if (col.id === activeColumn.id) {
-                                return {
-                                    ...col,
-                                    cards: arrayMove([...col.cards], oldIndex, newIndex)
-                                };
+                                return { ...col, cards: arrayMove([...col.cards], oldIndex, newIndex) };
                             }
                             return col;
                         })
@@ -327,7 +184,6 @@ export default function Show({ board }) {
             }
         }
 
-        // Envoie la mise à jour au serveur
         const cardNumericId = getCardNumericId(activeId);
         const currentColumn = columns.find(col =>
             col.cards?.some(c => c.id === cardNumericId)
@@ -335,13 +191,10 @@ export default function Show({ board }) {
 
         if (currentColumn) {
             const newPosition = currentColumn.cards.findIndex(c => c.id === cardNumericId);
-
             router.patch(route('cards.move', cardNumericId), {
                 column_id: currentColumn.id,
                 position: newPosition >= 0 ? newPosition : 0
-            }, {
-                preserveScroll: true
-            });
+            }, { preserveScroll: true });
         }
     }
 
@@ -350,11 +203,35 @@ export default function Show({ board }) {
             <Head title={board.name} />
 
             <div className="p-6">
-                <h1 className="text-2xl font-bold mb-2">{board.name}</h1>
+                {/* Header */}
+                <div className="flex justify-between items-center mb-2">
+                    <h1 className="text-2xl font-bold">{board.name}</h1>
+                    <button
+                        onClick={() => setShowImportForm(!showImportForm)}
+                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    >
+                        Importer CSV
+                    </button>
+                </div>
+
+                {/* Import Form */}
+                {showImportForm && (
+                    <ImportForm
+                        form={importForm}
+                        boardId={board.id}
+                        onSuccess={() => {
+                            setShowImportForm(false);
+                            importForm.reset();
+                        }}
+                    />
+                )}
+
+                {/* Description */}
                 {board.description && (
                     <p className="text-gray-600 mb-6">{board.description}</p>
                 )}
 
+                {/* Board */}
                 <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -370,39 +247,21 @@ export default function Show({ board }) {
                                 onDeleteColumn={deleteColumn}
                                 onDeleteCard={deleteCard}
                                 onAddCard={addCard}
-                                activeColumnId={activeColumnId}
-                                setActiveColumnId={setActiveColumnId}
+                                isAddingCard={activeColumnId === column.id}
+                                onStartAddCard={setActiveColumnId}
+                                onCancelAddCard={() => setActiveColumnId(null)}
                                 cardForm={cardForm}
                             />
                         ))}
 
+                        {/* New Column */}
                         <div className="min-w-[280px]">
                             {showColumnForm ? (
-                                <form onSubmit={addColumn} className="bg-gray-100 rounded p-4">
-                                    <input
-                                        type="text"
-                                        value={columnForm.data.name}
-                                        onChange={(e) => columnForm.setData('name', e.target.value)}
-                                        placeholder="Nom de la colonne"
-                                        className="w-full border rounded px-2 py-1 mb-2"
-                                        autoFocus
-                                    />
-                                    <div className="flex gap-2">
-                                        <button
-                                            type="submit"
-                                            className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
-                                        >
-                                            Ajouter
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowColumnForm(false)}
-                                            className="px-3 py-1 text-sm"
-                                        >
-                                            Annuler
-                                        </button>
-                                    </div>
-                                </form>
+                                <ColumnForm
+                                    form={columnForm}
+                                    onSubmit={addColumn}
+                                    onCancel={() => setShowColumnForm(false)}
+                                />
                             ) : (
                                 <button
                                     onClick={() => setShowColumnForm(true)}
@@ -415,11 +274,11 @@ export default function Show({ board }) {
                     </div>
 
                     <DragOverlay>
-                        {activeCard ? (
+                        {activeCard && (
                             <div className="bg-white p-3 rounded shadow-lg rotate-3 cursor-grabbing">
                                 <span>{activeCard.title}</span>
                             </div>
-                        ) : null}
+                        )}
                     </DragOverlay>
                 </DndContext>
             </div>

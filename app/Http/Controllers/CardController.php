@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CardMoved;
+use App\Events\CardDeleted;
 use App\Models\Card;
 use App\Models\Column;
 use Illuminate\Http\Request;
@@ -75,7 +77,12 @@ class CardController extends Controller
             abort(403);
         }
 
+
+        $boardId = $card->column->board_id;
+        $cardId = $card->id;
+
         $card->delete();
+        broadcast(new CardDeleted($boardId, $cardId))->toOthers();
 
         return redirect()->back()->with('success', 'Carte supprimée !');
     }
@@ -94,16 +101,26 @@ class CardController extends Controller
             'position' => 'required|integer|min:0'
         ]);
 
-        // Vérifie que la colonne cible appartient au même board
         $targetColumn = Column::find($validated['column_id']);
         if ($targetColumn->board_id !== $card->column->board_id) {
             abort(403, 'Impossible de déplacer vers un autre board');
         }
 
+        // Garde l'ancienne colonne pour l'événement
+        $fromColumnId = $card->column_id;
+
         $card->update([
             'column_id' => $validated['column_id'],
             'position' => $validated['position']
         ]);
+
+        // Diffuse l'événement à tous les utilisateurs du board
+        broadcast(new CardMoved(
+            $card,
+            $fromColumnId,
+            $validated['column_id'],
+            $validated['position']
+        ))->toOthers();  // toOthers() = n'envoie pas à l'utilisateur qui a fait l'action
 
         return redirect()->back()->with('success', 'Carte déplacée !');
     }

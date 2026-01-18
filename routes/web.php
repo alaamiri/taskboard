@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ColumnController;
@@ -49,6 +50,10 @@ Route::middleware('auth')->group(function () {
         ->name('cards.destroy');
     Route::patch('/cards/{card}/move', [CardController::class, 'move'])
         ->name('cards.move');
+
+    // ImportController - Horizon
+    Route::post('/boards/{board}/import', [ImportController::class, 'store'])
+        ->name('boards.import');
 });
 
 require __DIR__.'/auth.php';

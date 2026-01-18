@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Board;
 use App\Models\Column;
+use App\Events\ColumnDeleted;
 use Illuminate\Http\Request;
 
 class ColumnController extends Controller
@@ -62,7 +63,12 @@ class ColumnController extends Controller
             abort(403);
         }
 
+        $boardId = $column->board_id;
+        $columnId = $column->id;
+
         $column->delete();
+
+        broadcast(new ColumnDeleted($boardId, $columnId))->toOthers();
 
         return redirect()->back()->with('success', 'Colonne supprimée !');
     }
