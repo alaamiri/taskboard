@@ -10,6 +10,11 @@ use App\Services\ColumnService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group Columns
+ *
+ * Gestion des colonnes dans un board
+ */
 class ColumnController extends Controller
 {
     public function __construct(
@@ -17,7 +22,26 @@ class ColumnController extends Controller
     ) {}
 
     /**
-     * POST /api/boards/{board}/columns
+     * Créer une colonne
+     *
+     * Ajoute une nouvelle colonne à un board.
+     *
+     * @authenticated
+     *
+     * @urlParam board integer required L'ID du board. Example: 1
+     *
+     * @bodyParam name string required Le nom de la colonne. Example: To Do
+     *
+     * @response 200 scenario="success" {
+     *   "data": {
+     *     "id": 1,
+     *     "name": "To Do",
+     *     "position": 0,
+     *     "board_id": 1,
+     *     "created_at": "2024-01-15T10:30:00.000000Z",
+     *     "updated_at": "2024-01-15T10:30:00.000000Z"
+     *   }
+     * }
      */
     public function store(Request $request, Board $board): ColumnResource
     {
@@ -33,7 +57,27 @@ class ColumnController extends Controller
     }
 
     /**
-     * PUT /api/columns/{column}
+     * Modifier une colonne
+     *
+     * Met à jour le nom ou la position d'une colonne.
+     *
+     * @authenticated
+     *
+     * @urlParam column integer required L'ID de la colonne. Example: 1
+     *
+     * @bodyParam name string Le nouveau nom. Example: In Progress
+     * @bodyParam position integer La nouvelle position. Example: 1
+     *
+     * @response 200 scenario="success" {
+     *   "data": {
+     *     "id": 1,
+     *     "name": "In Progress",
+     *     "position": 1,
+     *     "board_id": 1,
+     *     "created_at": "2024-01-15T10:30:00.000000Z",
+     *     "updated_at": "2024-01-15T11:00:00.000000Z"
+     *   }
+     * }
      */
     public function update(Request $request, Column $column): ColumnResource
     {
@@ -50,7 +94,15 @@ class ColumnController extends Controller
     }
 
     /**
-     * DELETE /api/columns/{column}
+     * Supprimer une colonne
+     *
+     * Supprime une colonne et toutes ses cartes.
+     *
+     * @authenticated
+     *
+     * @urlParam column integer required L'ID de la colonne. Example: 1
+     *
+     * @response 204 scenario="success"
      */
     public function destroy(Column $column): Response
     {

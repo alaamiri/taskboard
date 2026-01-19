@@ -1,0 +1,621 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost"
+        }
+    ],
+    "info": {
+        "name": "Laravel API Documentation",
+        "_postman_id": "9a26013c-7131-4846-a522-ef4ae50485f7",
+        "description": "API pour g\u00e9rer des boards, colonnes et cartes de type Kanban.",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Boards",
+            "description": "\nGestion des boards (tableaux Kanban)",
+            "item": [
+                {
+                    "name": "Liste des boards",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "R\u00e9cup\u00e8re tous les boards de l'utilisateur connect\u00e9."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Mon Projet\",\n      \"description\": \"Description du projet\",\n      \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n      \"updated_at\": \"2024-01-15T10:30:00.000000Z\",\n      \"columns_count\": 3\n    }\n  ]\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Cr\u00e9er un board",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"Mon Projet\",\"description\":\"Description de mon projet\"}"
+                        },
+                        "description": "Cr\u00e9e un nouveau board pour l'utilisateur connect\u00e9."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Mon Projet\",\n    \"description\": \"Description de mon projet\",\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\n  \"message\": \"The name field is required.\",\n  \"errors\": {\n    \"name\": [\"The name field is required.\"]\n  }\n}",
+                            "name": "validation error"
+                        }
+                    ]
+                },
+                {
+                    "name": "Afficher un board",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the board."
+                                },
+                                {
+                                    "id": "board",
+                                    "key": "board",
+                                    "value": "1",
+                                    "description": "L'ID du board."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "R\u00e9cup\u00e8re un board avec ses colonnes et cartes."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Mon Projet\",\n    \"description\": \"Description\",\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"columns\": [\n      {\n        \"id\": 1,\n        \"name\": \"To Do\",\n        \"position\": 0,\n        \"cards\": []\n      }\n    ]\n  }\n}",
+                            "name": "success"
+                        },
+                        {
+                            "header": [],
+                            "code": 403,
+                            "body": "{\n  \"message\": \"This action is unauthorized.\"\n}",
+                            "name": "forbidden"
+                        },
+                        {
+                            "header": [],
+                            "code": 404,
+                            "body": "{\n  \"message\": \"No query results for model [App\\\\Models\\\\Board] 999\"\n}",
+                            "name": "not found"
+                        }
+                    ]
+                },
+                {
+                    "name": "Modifier un board",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the board."
+                                },
+                                {
+                                    "id": "board",
+                                    "key": "board",
+                                    "value": "1",
+                                    "description": "L'ID du board."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"Nouveau Nom\",\"description\":\"Nouvelle description\"}"
+                        },
+                        "description": "Met \u00e0 jour les informations d'un board."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Nouveau Nom\",\n    \"description\": \"Nouvelle description\",\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T11:00:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Supprimer un board",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "The ID of the board."
+                                },
+                                {
+                                    "id": "board",
+                                    "key": "board",
+                                    "value": "1",
+                                    "description": "L'ID du board."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Supprime un board et toutes ses colonnes et cartes."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 204,
+                            "body": "",
+                            "name": "success"
+                        },
+                        {
+                            "header": [],
+                            "code": 403,
+                            "body": "{\n  \"message\": \"This action is unauthorized.\"\n}",
+                            "name": "forbidden"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Cards",
+            "description": "\nGestion des cartes (t\u00e2ches) dans les colonnes",
+            "item": [
+                {
+                    "name": "Cr\u00e9er une carte",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/columns\/:column_id\/cards",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/columns\/:column_id\/cards",
+                            "variable": [
+                                {
+                                    "id": "column_id",
+                                    "key": "column_id",
+                                    "value": "1",
+                                    "description": "The ID of the column."
+                                },
+                                {
+                                    "id": "column",
+                                    "key": "column",
+                                    "value": "1",
+                                    "description": "L'ID de la colonne."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title\":\"Impl\u00e9menter l'API\",\"description\":\"Cr\u00e9er les endpoints REST\"}"
+                        },
+                        "description": "Ajoute une nouvelle carte \u00e0 une colonne."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Impl\u00e9menter l'API\",\n    \"description\": \"Cr\u00e9er les endpoints REST\",\n    \"position\": 0,\n    \"column_id\": 1,\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Modifier une carte",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/cards\/:card_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/cards\/:card_id",
+                            "variable": [
+                                {
+                                    "id": "card_id",
+                                    "key": "card_id",
+                                    "value": "34",
+                                    "description": "The ID of the card."
+                                },
+                                {
+                                    "id": "card",
+                                    "key": "card",
+                                    "value": "1",
+                                    "description": "L'ID de la carte."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"title\":\"Nouveau titre\",\"description\":\"Nouvelle description\"}"
+                        },
+                        "description": "Met \u00e0 jour le titre ou la description d'une carte."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Nouveau titre\",\n    \"description\": \"Nouvelle description\",\n    \"position\": 0,\n    \"column_id\": 1,\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T11:00:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Supprimer une carte",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/cards\/:card_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/cards\/:card_id",
+                            "variable": [
+                                {
+                                    "id": "card_id",
+                                    "key": "card_id",
+                                    "value": "34",
+                                    "description": "The ID of the card."
+                                },
+                                {
+                                    "id": "card",
+                                    "key": "card",
+                                    "value": "1",
+                                    "description": "L'ID de la carte."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Supprime d\u00e9finitivement une carte."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 204,
+                            "body": "",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "D\u00e9placer une carte",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/cards\/:card_id\/move",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/cards\/:card_id\/move",
+                            "variable": [
+                                {
+                                    "id": "card_id",
+                                    "key": "card_id",
+                                    "value": "34",
+                                    "description": "The ID of the card."
+                                },
+                                {
+                                    "id": "card",
+                                    "key": "card",
+                                    "value": "1",
+                                    "description": "L'ID de la carte."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"column_id\":2,\"position\":0}"
+                        },
+                        "description": "D\u00e9place une carte vers une autre colonne et\/ou position.\nD\u00e9clenche un \u00e9v\u00e9nement WebSocket pour la synchronisation temps r\u00e9el."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Ma carte\",\n    \"description\": \"Description\",\n    \"position\": 0,\n    \"column_id\": 2,\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T11:00:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        },
+                        {
+                            "header": [],
+                            "code": 403,
+                            "body": "{\n  \"message\": \"Cannot move card to another board\"\n}",
+                            "name": "autre board"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Columns",
+            "description": "\nGestion des colonnes dans un board",
+            "item": [
+                {
+                    "name": "Cr\u00e9er une colonne",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/boards\/:board_id\/columns",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/boards\/:board_id\/columns",
+                            "variable": [
+                                {
+                                    "id": "board_id",
+                                    "key": "board_id",
+                                    "value": "1",
+                                    "description": "The ID of the board."
+                                },
+                                {
+                                    "id": "board",
+                                    "key": "board",
+                                    "value": "1",
+                                    "description": "L'ID du board."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"To Do\"}"
+                        },
+                        "description": "Ajoute une nouvelle colonne \u00e0 un board."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"To Do\",\n    \"position\": 0,\n    \"board_id\": 1,\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Modifier une colonne",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/columns\/:column_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/columns\/:column_id",
+                            "variable": [
+                                {
+                                    "id": "column_id",
+                                    "key": "column_id",
+                                    "value": "1",
+                                    "description": "The ID of the column."
+                                },
+                                {
+                                    "id": "column",
+                                    "key": "column",
+                                    "value": "1",
+                                    "description": "L'ID de la colonne."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"In Progress\",\"position\":1}"
+                        },
+                        "description": "Met \u00e0 jour le nom ou la position d'une colonne."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"In Progress\",\n    \"position\": 1,\n    \"board_id\": 1,\n    \"created_at\": \"2024-01-15T10:30:00.000000Z\",\n    \"updated_at\": \"2024-01-15T11:00:00.000000Z\"\n  }\n}",
+                            "name": "success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Supprimer une colonne",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/columns\/:column_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/columns\/:column_id",
+                            "variable": [
+                                {
+                                    "id": "column_id",
+                                    "key": "column_id",
+                                    "value": "1",
+                                    "description": "The ID of the column."
+                                },
+                                {
+                                    "id": "column",
+                                    "key": "column",
+                                    "value": "1",
+                                    "description": "L'ID de la colonne."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Supprime une colonne et toutes ses cartes."
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 204,
+                            "body": "",
+                            "name": "success"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "Authorization",
+                "type": "string"
+            }
+        ]
+    }
+}

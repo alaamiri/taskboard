@@ -1,0 +1,804 @@
+openapi: 3.0.3
+info:
+  title: 'Laravel API Documentation'
+  description: 'API pour gérer des boards, colonnes et cartes de type Kanban.'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+tags:
+  -
+    name: Boards
+    description: "\nGestion des boards (tableaux Kanban)"
+  -
+    name: Cards
+    description: "\nGestion des cartes (tâches) dans les colonnes"
+  -
+    name: Columns
+    description: "\nGestion des colonnes dans un board"
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'Utilisez un token Sanctum obtenu via la connexion.'
+security:
+  -
+    default: []
+paths:
+  /api/boards:
+    get:
+      summary: 'Liste des boards'
+      operationId: listeDesBoards
+      description: "Récupère tous les boards de l'utilisateur connecté."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    -
+                      id: 1
+                      name: 'Mon Projet'
+                      description: 'Description du projet'
+                      created_at: '2024-01-15T10:30:00.000000Z'
+                      updated_at: '2024-01-15T10:30:00.000000Z'
+                      columns_count: 3
+                properties:
+                  data:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        name: 'Mon Projet'
+                        description: 'Description du projet'
+                        created_at: '2024-01-15T10:30:00.000000Z'
+                        updated_at: '2024-01-15T10:30:00.000000Z'
+                        columns_count: 3
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: 'Mon Projet'
+                        description:
+                          type: string
+                          example: 'Description du projet'
+                        created_at:
+                          type: string
+                          example: '2024-01-15T10:30:00.000000Z'
+                        updated_at:
+                          type: string
+                          example: '2024-01-15T10:30:00.000000Z'
+                        columns_count:
+                          type: integer
+                          example: 3
+      tags:
+        - Boards
+    post:
+      summary: 'Créer un board'
+      operationId: crerUnBoard
+      description: "Crée un nouveau board pour l'utilisateur connecté."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    name: 'Mon Projet'
+                    description: 'Description de mon projet'
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T10:30:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Mon Projet'
+                      description:
+                        type: string
+                        example: 'Description de mon projet'
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+        422:
+          description: 'validation error'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'The name field is required.'
+                  errors:
+                    name:
+                      - 'The name field is required.'
+                properties:
+                  message:
+                    type: string
+                    example: 'The name field is required.'
+                  errors:
+                    type: object
+                    properties:
+                      name:
+                        type: array
+                        example:
+                          - 'The name field is required.'
+                        items:
+                          type: string
+      tags:
+        - Boards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Le nom du board.'
+                  example: 'Mon Projet'
+                description:
+                  type: string
+                  description: 'La description du board.'
+                  example: 'Description de mon projet'
+                  nullable: true
+              required:
+                - name
+  '/api/boards/{id}':
+    get:
+      summary: 'Afficher un board'
+      operationId: afficherUnBoard
+      description: 'Récupère un board avec ses colonnes et cartes.'
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    name: 'Mon Projet'
+                    description: Description
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T10:30:00.000000Z'
+                    columns:
+                      -
+                        id: 1
+                        name: 'To Do'
+                        position: 0
+                        cards: []
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Mon Projet'
+                      description:
+                        type: string
+                        example: Description
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      columns:
+                        type: array
+                        example:
+                          -
+                            id: 1
+                            name: 'To Do'
+                            position: 0
+                            cards: []
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: 'To Do'
+                            position:
+                              type: integer
+                              example: 0
+                            cards:
+                              type: array
+                              example: []
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'This action is unauthorized.'
+                properties:
+                  message:
+                    type: string
+                    example: 'This action is unauthorized.'
+        404:
+          description: 'not found'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'No query results for model [App\Models\Board] 999'
+                properties:
+                  message:
+                    type: string
+                    example: 'No query results for model [App\Models\Board] 999'
+      tags:
+        - Boards
+    put:
+      summary: 'Modifier un board'
+      operationId: modifierUnBoard
+      description: "Met à jour les informations d'un board."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    name: 'Nouveau Nom'
+                    description: 'Nouvelle description'
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T11:00:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Nouveau Nom'
+                      description:
+                        type: string
+                        example: 'Nouvelle description'
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T11:00:00.000000Z'
+      tags:
+        - Boards
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Le nouveau nom du board.'
+                  example: 'Nouveau Nom'
+                description:
+                  type: string
+                  description: 'La nouvelle description.'
+                  example: 'Nouvelle description'
+                  nullable: true
+    delete:
+      summary: 'Supprimer un board'
+      operationId: supprimerUnBoard
+      description: 'Supprime un board et toutes ses colonnes et cartes.'
+      parameters: []
+      responses:
+        204:
+          description: success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'This action is unauthorized.'
+                properties:
+                  message:
+                    type: string
+                    example: 'This action is unauthorized.'
+      tags:
+        - Boards
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the board.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: board
+        description: "L'ID du board."
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/columns/{column_id}/cards':
+    post:
+      summary: 'Créer une carte'
+      operationId: crerUneCarte
+      description: 'Ajoute une nouvelle carte à une colonne.'
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    title: "Implémenter l'API"
+                    description: 'Créer les endpoints REST'
+                    position: 0
+                    column_id: 1
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T10:30:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Implémenter l'API"
+                      description:
+                        type: string
+                        example: 'Créer les endpoints REST'
+                      position:
+                        type: integer
+                        example: 0
+                      column_id:
+                        type: integer
+                        example: 1
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+      tags:
+        - Cards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'Le titre de la carte.'
+                  example: "Implémenter l'API"
+                description:
+                  type: string
+                  description: 'La description de la carte.'
+                  example: 'Créer les endpoints REST'
+                  nullable: true
+              required:
+                - title
+    parameters:
+      -
+        in: path
+        name: column_id
+        description: 'The ID of the column.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: column
+        description: "L'ID de la colonne."
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/cards/{card_id}':
+    put:
+      summary: 'Modifier une carte'
+      operationId: modifierUneCarte
+      description: "Met à jour le titre ou la description d'une carte."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    title: 'Nouveau titre'
+                    description: 'Nouvelle description'
+                    position: 0
+                    column_id: 1
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T11:00:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: 'Nouveau titre'
+                      description:
+                        type: string
+                        example: 'Nouvelle description'
+                      position:
+                        type: integer
+                        example: 0
+                      column_id:
+                        type: integer
+                        example: 1
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T11:00:00.000000Z'
+      tags:
+        - Cards
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'Le nouveau titre.'
+                  example: 'Nouveau titre'
+                description:
+                  type: string
+                  description: 'La nouvelle description.'
+                  example: 'Nouvelle description'
+                  nullable: true
+    delete:
+      summary: 'Supprimer une carte'
+      operationId: supprimerUneCarte
+      description: 'Supprime définitivement une carte.'
+      parameters: []
+      responses:
+        204:
+          description: success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+      tags:
+        - Cards
+    parameters:
+      -
+        in: path
+        name: card_id
+        description: 'The ID of the card.'
+        example: 34
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: card
+        description: "L'ID de la carte."
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/cards/{card_id}/move':
+    patch:
+      summary: 'Déplacer une carte'
+      operationId: dplacerUneCarte
+      description: "Déplace une carte vers une autre colonne et/ou position.\nDéclenche un événement WebSocket pour la synchronisation temps réel."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    title: 'Ma carte'
+                    description: Description
+                    position: 0
+                    column_id: 2
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T11:00:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: 'Ma carte'
+                      description:
+                        type: string
+                        example: Description
+                      position:
+                        type: integer
+                        example: 0
+                      column_id:
+                        type: integer
+                        example: 2
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T11:00:00.000000Z'
+        403:
+          description: 'autre board'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Cannot move card to another board'
+                properties:
+                  message:
+                    type: string
+                    example: 'Cannot move card to another board'
+      tags:
+        - Cards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                column_id:
+                  type: integer
+                  description: "L'ID de la colonne de destination."
+                  example: 2
+                position:
+                  type: integer
+                  description: 'La nouvelle position dans la colonne.'
+                  example: 0
+              required:
+                - column_id
+                - position
+    parameters:
+      -
+        in: path
+        name: card_id
+        description: 'The ID of the card.'
+        example: 34
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: card
+        description: "L'ID de la carte."
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/boards/{board_id}/columns':
+    post:
+      summary: 'Créer une colonne'
+      operationId: crerUneColonne
+      description: 'Ajoute une nouvelle colonne à un board.'
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    name: 'To Do'
+                    position: 0
+                    board_id: 1
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T10:30:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'To Do'
+                      position:
+                        type: integer
+                        example: 0
+                      board_id:
+                        type: integer
+                        example: 1
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+      tags:
+        - Columns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Le nom de la colonne.'
+                  example: 'To Do'
+              required:
+                - name
+    parameters:
+      -
+        in: path
+        name: board_id
+        description: 'The ID of the board.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: board
+        description: "L'ID du board."
+        example: 1
+        required: true
+        schema:
+          type: integer
+  '/api/columns/{column_id}':
+    put:
+      summary: 'Modifier une colonne'
+      operationId: modifierUneColonne
+      description: "Met à jour le nom ou la position d'une colonne."
+      parameters: []
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    name: 'In Progress'
+                    position: 1
+                    board_id: 1
+                    created_at: '2024-01-15T10:30:00.000000Z'
+                    updated_at: '2024-01-15T11:00:00.000000Z'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'In Progress'
+                      position:
+                        type: integer
+                        example: 1
+                      board_id:
+                        type: integer
+                        example: 1
+                      created_at:
+                        type: string
+                        example: '2024-01-15T10:30:00.000000Z'
+                      updated_at:
+                        type: string
+                        example: '2024-01-15T11:00:00.000000Z'
+      tags:
+        - Columns
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Le nouveau nom.'
+                  example: 'In Progress'
+                position:
+                  type: integer
+                  description: 'La nouvelle position.'
+                  example: 1
+    delete:
+      summary: 'Supprimer une colonne'
+      operationId: supprimerUneColonne
+      description: 'Supprime une colonne et toutes ses cartes.'
+      parameters: []
+      responses:
+        204:
+          description: success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+      tags:
+        - Columns
+    parameters:
+      -
+        in: path
+        name: column_id
+        description: 'The ID of the column.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+      -
+        in: path
+        name: column
+        description: "L'ID de la colonne."
+        example: 1
+        required: true
+        schema:
+          type: integer

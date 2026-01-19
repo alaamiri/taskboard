@@ -1,0 +1,389 @@
+name: Cards
+description: |-
+
+  Gestion des cartes (tâches) dans les colonnes
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/columns/{column_id}/cards'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        Gestion des cartes (tâches) dans les colonnes
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Créer une carte'
+      description: 'Ajoute une nouvelle carte à une colonne.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      column_id:
+        custom: []
+        name: column_id
+        description: 'The ID of the column.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      column:
+        custom: []
+        name: column
+        description: "L'ID de la colonne."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      column_id: 1
+      column: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        custom: []
+        name: title
+        description: 'Le titre de la carte.'
+        required: true
+        example: "Implémenter l'API"
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      description:
+        custom: []
+        name: description
+        description: 'La description de la carte.'
+        required: false
+        example: 'Créer les endpoints REST'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      title: "Implémenter l'API"
+      description: 'Créer les endpoints REST'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "title": "Implémenter l'API",
+              "description": "Créer les endpoints REST",
+              "position": 0,
+              "column_id": 1,
+              "created_at": "2024-01-15T10:30:00.000000Z",
+              "updated_at": "2024-01-15T10:30:00.000000Z"
+            }
+          }
+        headers: []
+        description: success
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/cards/{card_id}'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        Gestion des cartes (tâches) dans les colonnes
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Modifier une carte'
+      description: "Met à jour le titre ou la description d'une carte."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      card_id:
+        custom: []
+        name: card_id
+        description: 'The ID of the card.'
+        required: true
+        example: 34
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      card:
+        custom: []
+        name: card
+        description: "L'ID de la carte."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      card_id: 34
+      card: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        custom: []
+        name: title
+        description: 'Le nouveau titre.'
+        required: false
+        example: 'Nouveau titre'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      description:
+        custom: []
+        name: description
+        description: 'La nouvelle description.'
+        required: false
+        example: 'Nouvelle description'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      title: 'Nouveau titre'
+      description: 'Nouvelle description'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "title": "Nouveau titre",
+              "description": "Nouvelle description",
+              "position": 0,
+              "column_id": 1,
+              "created_at": "2024-01-15T10:30:00.000000Z",
+              "updated_at": "2024-01-15T11:00:00.000000Z"
+            }
+          }
+        headers: []
+        description: success
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/cards/{card_id}'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        Gestion des cartes (tâches) dans les colonnes
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Supprimer une carte'
+      description: 'Supprime définitivement une carte.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      card_id:
+        custom: []
+        name: card_id
+        description: 'The ID of the card.'
+        required: true
+        example: 34
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      card:
+        custom: []
+        name: card
+        description: "L'ID de la carte."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      card_id: 34
+      card: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: ''
+        headers: []
+        description: success
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/cards/{card_id}/move'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        Gestion des cartes (tâches) dans les colonnes
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Déplacer une carte'
+      description: |-
+        Déplace une carte vers une autre colonne et/ou position.
+        Déclenche un événement WebSocket pour la synchronisation temps réel.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      card_id:
+        custom: []
+        name: card_id
+        description: 'The ID of the card.'
+        required: true
+        example: 34
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      card:
+        custom: []
+        name: card
+        description: "L'ID de la carte."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      card_id: 34
+      card: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      column_id:
+        custom: []
+        name: column_id
+        description: "L'ID de la colonne de destination."
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      position:
+        custom: []
+        name: position
+        description: 'La nouvelle position dans la colonne.'
+        required: true
+        example: 0
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      column_id: 2
+      position: 0
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "title": "Ma carte",
+              "description": "Description",
+              "position": 0,
+              "column_id": 2,
+              "created_at": "2024-01-15T10:30:00.000000Z",
+              "updated_at": "2024-01-15T11:00:00.000000Z"
+            }
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+            "message": "Cannot move card to another board"
+          }
+        headers: []
+        description: 'autre board'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null

@@ -50,6 +50,7 @@ Desktop.ini
 # Docker
 docker-compose.override.yml
 .docker-sync*
+docker/nginx/ssl/
 
 # Composer
 /auth.json
@@ -64,3 +65,5 @@ Homestead.yaml
 *.bak
 *.tmp
 *.temp
+/.env.production.example
+/.scribe/.filehashes
