@@ -5,20 +5,24 @@ use App\Http\Controllers\Api\ColumnController;
 use App\Http\Controllers\Api\CardController;
 use Illuminate\Support\Facades\Route;
 
-// Toutes les routes API nécessitent une authentification
 Route::middleware('auth:sanctum')->group(function () {
-    
-    // Boards
-    Route::apiResource('boards', BoardController::class);
-    
-    // Columns
-    Route::post('boards/{board}/columns', [ColumnController::class, 'store']);
-    Route::put('columns/{column}', [ColumnController::class, 'update']);
-    Route::delete('columns/{column}', [ColumnController::class, 'destroy']);
-    
-    // Cards
-    Route::post('columns/{column}/cards', [CardController::class, 'store']);
-    Route::put('cards/{card}', [CardController::class, 'update']);
-    Route::delete('cards/{card}', [CardController::class, 'destroy']);
-    Route::patch('cards/{card}/move', [CardController::class, 'move']);
+
+    // Ajoute ->names('api.boards') pour préfixer les noms
+    Route::apiResource('boards', BoardController::class)->names('api.boards');
+
+    Route::post('boards/{board}/columns', [ColumnController::class, 'store'])
+        ->name('api.columns.store');
+    Route::put('columns/{column}', [ColumnController::class, 'update'])
+        ->name('api.columns.update');
+    Route::delete('columns/{column}', [ColumnController::class, 'destroy'])
+        ->name('api.columns.destroy');
+
+    Route::post('columns/{column}/cards', [CardController::class, 'store'])
+        ->name('api.cards.store');
+    Route::put('cards/{card}', [CardController::class, 'update'])
+        ->name('api.cards.update');
+    Route::delete('cards/{card}', [CardController::class, 'destroy'])
+        ->name('api.cards.destroy');
+    Route::patch('cards/{card}/move', [CardController::class, 'move'])
+        ->name('api.cards.move');
 });
