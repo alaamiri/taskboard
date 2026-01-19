@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CardResource;
-use App\Events\CardDeleted;
-use App\Events\CardMoved;
 use App\Models\Card;
 use App\Models\Column;
+use App\Services\CardService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CardController extends Controller
 {
+    public function __construct(
+        private readonly CardService $cardService
+    ) {}
+
+    /**
+     * POST /api/columns/{column}/cards
+     */
     public function store(Request $request, Column $column): CardResource
     {
         $this->authorize('create', [Card::class, $column]);
@@ -22,18 +28,14 @@ class CardController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $position = $column->cards()->count();
-
-        $card = $column->cards()->create([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'position' => $position,
-            'user_id' => null,
-        ]);
+        $card = $this->cardService->create($column, $validated);
 
         return new CardResource($card);
     }
 
+    /**
+     * PUT /api/cards/{card}
+     */
     public function update(Request $request, Card $card): CardResource
     {
         $this->authorize('update', $card);
@@ -43,25 +45,26 @@ class CardController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $card->update($validated);
+        $card = $this->cardService->update($card, $validated);
 
         return new CardResource($card);
     }
 
+    /**
+     * DELETE /api/cards/{card}
+     */
     public function destroy(Card $card): Response
     {
         $this->authorize('delete', $card);
 
-        $boardId = $card->column->board_id;
-        $cardId = $card->id;
-
-        $card->delete();
-
-        broadcast(new CardDeleted($boardId, $cardId))->toOthers();
+        $this->cardService->delete($card);
 
         return response()->noContent();
     }
 
+    /**
+     * PATCH /api/cards/{card}/move
+     */
     public function move(Request $request, Card $card): CardResource
     {
         $this->authorize('move', $card);
@@ -71,25 +74,7 @@ class CardController extends Controller
             'position' => 'required|integer|min:0',
         ]);
 
-        $targetColumn = Column::find($validated['column_id']);
-
-        if ($targetColumn->board_id !== $card->column->board_id) {
-            abort(403, 'Cannot move to another board');
-        }
-
-        $fromColumnId = $card->column_id;
-
-        $card->update([
-            'column_id' => $validated['column_id'],
-            'position' => $validated['position'],
-        ]);
-
-        broadcast(new CardMoved(
-            $card,
-            $fromColumnId,
-            $validated['column_id'],
-            $validated['position']
-        ))->toOthers();
+        $card = $this->cardService->move($card, $validated);
 
         return new CardResource($card);
     }
