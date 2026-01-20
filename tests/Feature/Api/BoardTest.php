@@ -8,16 +8,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class BoardTest extends TestCase
+class BoardTest extends ApiTestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        $this->user->assignRole('viewer');
     }
 
     /*
@@ -276,9 +275,13 @@ class BoardTest extends TestCase
 
     public function test_user_can_delete_own_board(): void
     {
-        Sanctum::actingAs($this->user);
+        // Utilise un admin car viewer ne peut pas supprimer
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
 
-        $board = Board::factory()->create(['user_id' => $this->user->id]);
+        Sanctum::actingAs($admin);
+
+        $board = Board::factory()->create(['user_id' => $admin->id]);
 
         $response = $this->deleteJson("/api/boards/{$board->id}");
 
@@ -291,6 +294,8 @@ class BoardTest extends TestCase
 
     public function test_user_cannot_delete_others_board(): void
     {
+        // Même un admin ne peut pas supprimer le board d'un autre (selon ta logique)
+        // Ou alors on teste qu'un viewer ne peut pas supprimer
         Sanctum::actingAs($this->user);
 
         $otherUser = User::factory()->create();

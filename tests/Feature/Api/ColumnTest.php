@@ -9,17 +9,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class ColumnTest extends TestCase
+class ColumnTest extends ApiTestCase
 {
-    use RefreshDatabase;
-
     private User $user;
     private Board $board;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->user = User::factory()->create();
+        $this->user->assignRole('viewer');
         $this->board = Board::factory()->create(['user_id' => $this->user->id]);
     }
 
@@ -124,6 +124,7 @@ class ColumnTest extends TestCase
         ]);
 
         $response = $this->putJson("/api/columns/{$column->id}", [
+            'name' => $column->name,  // Ajoute le name car required dans le DTO
             'position' => 2,
         ]);
 
@@ -154,9 +155,14 @@ class ColumnTest extends TestCase
 
     public function test_user_can_delete_column_in_own_board(): void
     {
-        Sanctum::actingAs($this->user);
+        // Utilise un admin car viewer ne peut pas supprimer
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+        $board = Board::factory()->create(['user_id' => $admin->id]);
 
-        $column = Column::factory()->create(['board_id' => $this->board->id]);
+        Sanctum::actingAs($admin);
+
+        $column = Column::factory()->create(['board_id' => $board->id]);
 
         $response = $this->deleteJson("/api/columns/{$column->id}");
 
@@ -182,9 +188,14 @@ class ColumnTest extends TestCase
 
     public function test_deleting_column_deletes_its_cards(): void
     {
-        Sanctum::actingAs($this->user);
+        // Utilise un admin car viewer ne peut pas supprimer
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+        $board = Board::factory()->create(['user_id' => $admin->id]);
 
-        $column = Column::factory()->create(['board_id' => $this->board->id]);
+        Sanctum::actingAs($admin);
+
+        $column = Column::factory()->create(['board_id' => $board->id]);
         $column->cards()->createMany([
             ['title' => 'Card 1', 'position' => 0],
             ['title' => 'Card 2', 'position' => 1],

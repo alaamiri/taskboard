@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Data\Column\ColumnData;
 use App\Events\ColumnDeleted;
 use App\Models\Board;
 use App\Models\Column;
 use App\Repositories\Contracts\ColumnRepositoryInterface;
+use Spatie\LaravelData\Optional;
 
 class ColumnService
 {
@@ -13,20 +15,30 @@ class ColumnService
         private readonly ColumnRepositoryInterface $columnRepository
     ) {}
 
-    public function create(Board $board, array $data): Column
+    public function create(Board $board, ColumnData $data): Column
     {
         $position = $board->columns()->count();
 
         return $this->columnRepository->create([
-            'name' => $data['name'],
+            'name' => $data->name,
             'board_id' => $board->id,
             'position' => $position,
         ]);
     }
 
-    public function update(Column $column, array $data): Column
+    public function update(Column $column, ColumnData $data): Column
     {
-        return $this->columnRepository->update($column, $data);
+        $updateData = [];
+
+        if (!$data->name instanceof Optional) {
+            $updateData['name'] = $data->name;
+        }
+
+        if ($data->position !== null) {
+            $updateData['position'] = $data->position;
+        }
+
+        return $this->columnRepository->update($column, $updateData);
     }
 
     public function delete(Column $column): void

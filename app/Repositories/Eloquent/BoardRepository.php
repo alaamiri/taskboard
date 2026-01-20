@@ -75,4 +75,21 @@ class BoardRepository implements BoardRepositoryInterface
         Cache::tags(["board.{$boardId}"])->flush();
         Cache::tags(["user.{$userId}.boards"])->flush();
     }
+
+    public function getAll(): Collection
+    {
+        return Cache::remember(
+            'boards.all',
+            now()->addMinutes(10),
+            fn () => Board::withCount('columns')
+                ->latest()
+                ->get()
+        );
+    }
+
+    private function clearUserCache(int $userId): void
+    {
+        Cache::forget("user.{$userId}.boards");
+        Cache::forget('boards.all');
+    }
 }

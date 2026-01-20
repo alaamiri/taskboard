@@ -13,6 +13,14 @@ class CardPolicy
      */
     public function create(User $user, Column $column): bool
     {
+        if (!$user->hasPermissionTo('cards.create')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $column->board->user_id;
     }
 
@@ -21,6 +29,14 @@ class CardPolicy
      */
     public function update(User $user, Card $card): bool
     {
+        if (!$user->hasPermissionTo('cards.update')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $card->column->board->user_id;
     }
 
@@ -29,6 +45,14 @@ class CardPolicy
      */
     public function delete(User $user, Card $card): bool
     {
+        if (!$user->hasPermissionTo('cards.delete')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $card->column->board->user_id;
     }
 
@@ -37,6 +61,14 @@ class CardPolicy
      */
     public function move(User $user, Card $card): bool
     {
+        if (!$user->hasPermissionTo('cards.move')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $card->column->board->user_id;
     }
 }

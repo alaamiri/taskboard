@@ -12,14 +12,20 @@ class BoardPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; // Tout utilisateur connecté peut voir sa liste
+        return true;
     }
 
     /**
      * L'utilisateur peut-il voir ce board ?
+     * Admin: peut voir tous les boards
+     * Viewer: peut voir seulement ses boards
      */
     public function view(User $user, Board $board): bool
     {
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $board->user_id;
     }
 
@@ -28,7 +34,7 @@ class BoardPolicy
      */
     public function create(User $user): bool
     {
-        return true; // Tout utilisateur connecté peut créer
+        return $user->hasPermissionTo('boards.create');
     }
 
     /**
@@ -36,14 +42,32 @@ class BoardPolicy
      */
     public function update(User $user, Board $board): bool
     {
+        if (!$user->hasPermissionTo('boards.update')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $board->user_id;
     }
 
     /**
      * L'utilisateur peut-il supprimer ce board ?
+     * Admin: oui
+     * Viewer: non
      */
     public function delete(User $user, Board $board): bool
     {
+        if (!$user->hasPermissionTo('boards.delete')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
         return $user->id === $board->user_id;
     }
 }

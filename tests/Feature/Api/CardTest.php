@@ -10,10 +10,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CardTest extends TestCase
+class CardTest extends ApiTestCase
 {
-    use RefreshDatabase;
-
     private User $user;
     private Board $board;
     private Column $column;
@@ -22,6 +20,7 @@ class CardTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        $this->user->assignRole('viewer');
         $this->board = Board::factory()->create(['user_id' => $this->user->id]);
         $this->column = Column::factory()->create(['board_id' => $this->board->id]);
     }
