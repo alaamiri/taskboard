@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Data\Board\BoardData;
 use App\Exceptions\Board\BoardDeletionFailedException;

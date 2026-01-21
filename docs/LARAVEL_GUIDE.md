@@ -357,15 +357,13 @@ app/Http/Controllers/
 ```
 
 ### Exemple : Controller Web
+
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Models\Board;
-use App\Services\BoardService;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Models\Board;use App\Services\Model\BoardService;use Illuminate\Http\Request;use Inertia\Inertia;
 
 class BoardController extends Controller
 {
@@ -419,17 +417,13 @@ class BoardController extends Controller
 ```
 
 ### Exemple : Controller API
+
 ```php
 <?php
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\BoardResource;
-use App\Models\Board;
-use App\Services\BoardService;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;use App\Http\Resources\BoardResource;use App\Models\Board;use App\Services\Model\BoardService;use Illuminate\Http\Request;use Illuminate\Http\Response;
 
 class BoardController extends Controller
 {

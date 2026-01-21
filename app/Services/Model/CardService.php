@@ -1,22 +1,24 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Data\Card\CardData;
 use App\Data\Card\MoveCardData;
 use App\Events\CardDeleted;
 use App\Events\CardMoved;
+use App\Exceptions\Card\CannotMoveCardException;
 use App\Models\Card;
 use App\Models\Column;
 use App\Repositories\Contracts\CardRepositoryInterface;
-use App\Exceptions\Card\CannotMoveCardException;
+use App\Services\Notification\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Optional;
 
 class CardService
 {
     public function __construct(
-        private readonly CardRepositoryInterface $cardRepository
+        private readonly CardRepositoryInterface $cardRepository,
+        private readonly NotificationService $notificationService
     ) {}
 
     public function create(Column $column, CardData $data): Card
@@ -67,8 +69,9 @@ class CardService
         if ($targetColumn->board_id !== $card->column->board_id) {
             throw new CannotMoveCardException($card, $targetColumn);
         }
-
+        $fromColumn = $card->column;
         $fromColumnId = $card->column_id;
+        $fromColumnName = $fromColumn->name;
 
         $card = DB::transaction(function () use ($card, $data) {
             // Réorganiser les positions dans la colonne source
@@ -87,6 +90,13 @@ class CardService
                 'position' => $data->position,
             ]);
         });
+
+        $this->notificationService->notifyCardMoved(
+            $card,
+            auth()->user(),
+            $fromColumnName,
+            $targetColumn->name
+        );
 
         broadcast(new CardMoved(
             $card,

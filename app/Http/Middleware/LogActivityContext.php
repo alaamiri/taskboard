@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Symfony\Component\HttpFoundation\Response;
 
-class LogActivityContext extends Middleware
+class LogActivityContext
 {
     public function handle(Request $request, Closure $next): Response
     {

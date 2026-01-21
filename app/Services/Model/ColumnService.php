@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Model;
 
 use App\Data\Column\ColumnData;
 use App\Events\ColumnDeleted;

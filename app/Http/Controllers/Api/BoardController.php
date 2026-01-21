@@ -6,7 +6,7 @@ use App\Data\Board\BoardData;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BoardResource;
 use App\Models\Board;
-use App\Services\BoardService;
+use App\Services\Model\BoardService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;

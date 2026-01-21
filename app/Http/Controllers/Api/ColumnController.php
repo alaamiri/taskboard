@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ColumnResource;
 use App\Models\Board;
 use App\Models\Column;
-use App\Services\ColumnService;
+use App\Services\Model\ColumnService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

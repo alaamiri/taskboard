@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CardResource;
 use App\Models\Card;
 use App\Models\Column;
-use App\Services\CardService;
+use App\Services\Model\CardService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

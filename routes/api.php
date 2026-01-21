@@ -28,4 +28,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('audit-logs', [App\Http\Controllers\Api\AuditLogController::class, 'index'])
         ->name('api.audit-logs.index');
+
+    // Notifications
+    Route::get('notifications', [App\Http\Controllers\Api\NotificationController::class, 'index'])
+        ->name('api.notifications.index');
+    Route::get('notifications/unread', [App\Http\Controllers\Api\NotificationController::class, 'unread'])
+        ->name('api.notifications.unread');
+    Route::patch('notifications/{id}/read', [App\Http\Controllers\Api\NotificationController::class, 'markAsRead'])
+        ->name('api.notifications.read');
+    Route::post('notifications/read-all', [App\Http\Controllers\Api\NotificationController::class, 'markAllAsRead'])
+        ->name('api.notifications.read-all');
+    Route::delete('notifications/{id}', [App\Http\Controllers\Api\NotificationController::class, 'destroy'])
+        ->name('api.notifications.destroy');
 });
