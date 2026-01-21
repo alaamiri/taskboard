@@ -22,3 +22,9 @@ Schedule::command('imports:clean --hours=24')
     ->everySixHours()
     ->withoutOverlapping()
     ->onOneServer();
+
+// Nettoie les logs d'audit de plus d'un an, chaque mois
+Schedule::command('audit:clean --days=365')
+    ->monthly()
+    ->withoutOverlapping()
+    ->onOneServer();

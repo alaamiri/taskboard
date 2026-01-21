@@ -8,12 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Board extends Model
 {
-    use HasFactory, ClearsCache;
+    use HasFactory, ClearsCache, LogsActivity;
     protected $fillable = ['name', 'description', 'user_id'];
 
+    /**
+     * Configuration de l'Audit Log
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Board {$eventName}");
+    }
     protected static function booted(): void
     {
         // Après création

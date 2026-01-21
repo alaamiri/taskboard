@@ -7,13 +7,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 
 class Card extends Model
 {
-    use HasFactory, ClearsCache;
+    use HasFactory, ClearsCache, LogsActivity;
 
     protected $fillable = ['title', 'description', 'position', 'column_id', 'user_id'];
+
+    /**
+     * Configuration de l'Audit Log
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'description', 'position', 'column_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Card {$eventName}");
+    }
+
 
     public function column(): BelongsTo
     {

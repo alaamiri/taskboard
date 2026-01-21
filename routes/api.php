@@ -25,4 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.cards.destroy');
     Route::patch('cards/{card}/move', [CardController::class, 'move'])
         ->name('api.cards.move');
+
+    Route::get('audit-logs', [App\Http\Controllers\Api\AuditLogController::class, 'index'])
+        ->name('api.audit-logs.index');
 });
