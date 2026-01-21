@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Board;
 use App\Models\User;
 use App\Repositories\Contracts\BoardRepositoryInterface;
+use App\Exceptions\Board\BoardNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,14 +21,19 @@ class BoardRepository implements BoardRepositoryInterface
             );
     }
 
-    public function findByIdWithRelations(int $id): ?Board
+    public function findByIdWithRelations(int $id): Board
     {
-        return Cache::tags(['boards', "board.{$id}"])
-            ->remember(
-                "board.{$id}.with_relations",
-                now()->addMinutes(30),
-                fn () => Board::with(['columns.cards', 'user'])->find($id)
-            );
+        $board = Cache::remember(
+            "board.{$id}.with_relations",
+            now()->addMinutes(30),
+            fn () => Board::with(['columns.cards', 'user'])->find($id)
+        );
+
+        if (!$board) {
+            throw new BoardNotFoundException($id);
+        }
+
+        return $board;
     }
 
     public function getAllForUser(User $user): Collection

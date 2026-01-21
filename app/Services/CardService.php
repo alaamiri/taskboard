@@ -9,6 +9,8 @@ use App\Events\CardMoved;
 use App\Models\Card;
 use App\Models\Column;
 use App\Repositories\Contracts\CardRepositoryInterface;
+use App\Exceptions\Card\CannotMoveCardException;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Optional;
 
 class CardService
@@ -55,20 +57,36 @@ class CardService
         broadcast(new CardDeleted($boardId, $cardId))->toOthers();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function move(Card $card, MoveCardData $data): Card
     {
         $targetColumn = Column::find($data->column_id);
 
         if ($targetColumn->board_id !== $card->column->board_id) {
-            abort(403, 'Cannot move card to another board');
+            throw new CannotMoveCardException($card, $targetColumn);
         }
 
         $fromColumnId = $card->column_id;
 
-        $card = $this->cardRepository->update($card, [
-            'column_id' => $data->column_id,
-            'position' => $data->position,
-        ]);
+        $card = DB::transaction(function () use ($card, $data) {
+            // Réorganiser les positions dans la colonne source
+            Card::where('column_id', $card->column_id)
+                ->where('position', '>', $card->position)
+                ->decrement('position');
+
+            // Faire de la place dans la colonne cible
+            Card::where('column_id', $data->column_id)
+                ->where('position', '>=', $data->position)
+                ->increment('position');
+
+            // Déplacer la carte
+            return $this->cardRepository->update($card, [
+                'column_id' => $data->column_id,
+                'position' => $data->position,
+            ]);
+        });
 
         broadcast(new CardMoved(
             $card,

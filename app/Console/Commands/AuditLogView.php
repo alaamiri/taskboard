@@ -15,7 +15,8 @@ class AuditLogView extends Command
     protected $signature = 'audit:view
                             {--limit=20 : Nombre d\'entrées à afficher}
                             {--user= : Filtrer par user ID}
-                            {--model= : Filtrer par type de model (Board, Column, Card)}';
+                            {--model= : Filtrer par type de model (Board, Column, Card)}
+                            {--exceptions : Afficher uniquement les exceptions}';
 
     /**
      * The console command description.
@@ -27,17 +28,22 @@ class AuditLogView extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $query = Activity::with('causer')
             ->latest()
             ->limit($this->option('limit'));
+
         if ($userId = $this->option('user')) {
             $query->where('causer_id', $userId);
         }
 
         if ($model = $this->option('model')) {
             $query->where('subject_type', 'like', "%{$model}%");
+        }
+
+        if ($this->option('exceptions')) {
+            $query->where('description', 'exception');
         }
 
         $activities = $query->get();

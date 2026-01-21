@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Spatie\Activitylog\Models\Activity;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,6 +24,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->report(function (\App\Exceptions\BaseException $e) {
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'type' => $e->getErrorType(),
+                    'message' => $e->getMessage(),
+                    'details' => $e->getDetails(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'url' => request()->fullUrl(),
+                    'method' => request()->method(),
+                ])
+                ->log('exception');
+        });
     })->create();

@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -28,3 +29,6 @@ Schedule::command('audit:clean --days=365')
     ->monthly()
     ->withoutOverlapping()
     ->onOneServer();
+
+//Laravel Health heartbeat
+Schedule::command(ScheduleCheckHeartbeatCommand::class)->everyMinute();

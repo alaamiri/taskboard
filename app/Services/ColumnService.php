@@ -7,6 +7,7 @@ use App\Events\ColumnDeleted;
 use App\Models\Board;
 use App\Models\Column;
 use App\Repositories\Contracts\ColumnRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Optional;
 
 class ColumnService
@@ -46,7 +47,10 @@ class ColumnService
         $boardId = $column->board_id;
         $columnId = $column->id;
 
-        $this->columnRepository->delete($column);
+        DB::transaction(function () use ($column) {
+            $column->cards()->delete();
+            $this->columnRepository->delete($column);
+        });
 
         broadcast(new ColumnDeleted($boardId, $columnId))->toOthers();
     }

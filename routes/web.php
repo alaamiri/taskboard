@@ -8,6 +8,8 @@ use App\Http\Controllers\CardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
+use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -54,6 +56,10 @@ Route::middleware('auth')->group(function () {
     // ImportController - Horizon
     Route::post('/boards/{board}/import', [ImportController::class, 'store'])
         ->name('boards.import');
+
+    // Health checks
+    Route::get('/health', HealthCheckJsonResultsController::class)->name('health');
+    Route::get('/health/dashboard', HealthCheckResultsController::class)->name('health.dashboard');
 });
 
 require __DIR__.'/auth.php';

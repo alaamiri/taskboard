@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Data\Board\BoardData;
+use App\Exceptions\Board\BoardDeletionFailedException;
 use App\Models\Board;
 use App\Models\User;
 use App\Repositories\Contracts\BoardRepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Optional;
 
 class BoardService
@@ -29,13 +31,28 @@ class BoardService
         return $this->boardRepository->findByIdWithRelations($board->id);
     }
 
+    /**
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Throwable
+     */
     public function create(User $user, BoardData $data): Board
     {
-        return $this->boardRepository->create([
-            'name' => $data->name,
-            'description' => $data->description,
-            'user_id' => $user->id,
-        ]);
+        return DB::transaction(function () use ($user, $data) {
+            $board = $this->boardRepository->create([
+                'name' => $data->name,
+                'description' => $data->description,
+                'user_id' => $user->id,
+            ]);
+
+            // Créer les colonnes par défaut
+            $board->columns()->createMany([
+                ['name' => 'À faire', 'position' => 0],
+                ['name' => 'En cours', 'position' => 1],
+                ['name' => 'Terminé', 'position' => 2],
+            ]);
+
+            return $board;
+        });
     }
 
     public function update(Board $board, BoardData $data): Board
@@ -53,8 +70,28 @@ class BoardService
         return $this->boardRepository->update($board, $updateData);
     }
 
+    /**
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Throwable
+     */
     public function delete(Board $board): void
     {
-        $this->boardRepository->delete($board);
+        try {
+            DB::transaction(function () use ($board) {
+                // Supprimer les cartes de toutes les colonnes
+                foreach ($board->columns as $column) {
+                    $column->cards()->delete();
+                }
+
+                // Supprimer les colonnes
+                $board->columns()->delete();
+
+                // Supprimer le board
+                $this->boardRepository->delete($board);
+            });
+        } catch (\Exception $exception) {
+            throw new BoardDeletionFailedException($board->id);
+        }
+
     }
 }
