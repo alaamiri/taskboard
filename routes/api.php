@@ -5,28 +5,50 @@ use App\Http\Controllers\Api\ColumnController;
 use App\Http\Controllers\Api\CardController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Ajoute ->names('api.boards') pour préfixer les noms
-    Route::apiResource('boards', BoardController::class)->names('api.boards');
+    Route::apiResource('boards', BoardController::class)
+        ->names('api.boards');
 
+    // Boards - Écriture (limite plus stricte)
+    Route::post('boards', [BoardController::class, 'store'])
+        ->middleware('throttle:api-write')
+        ->name('api.boards.store');
+    Route::put('boards/{board}', [BoardController::class, 'update'])
+        ->middleware('throttle:api-write')
+        ->name('api.boards.update');
+    Route::delete('boards/{board}', [BoardController::class, 'destroy'])
+        ->middleware('throttle:api-write')
+        ->name('api.boards.destroy');
+
+    // Column - Écriture
     Route::post('boards/{board}/columns', [ColumnController::class, 'store'])
+        ->middleware('throttle:api-write')
         ->name('api.columns.store');
     Route::put('columns/{column}', [ColumnController::class, 'update'])
+        ->middleware('throttle:api-write')
         ->name('api.columns.update');
     Route::delete('columns/{column}', [ColumnController::class, 'destroy'])
+        ->middleware('throttle:api-write')
         ->name('api.columns.destroy');
 
+    // Cards - Écriture
     Route::post('columns/{column}/cards', [CardController::class, 'store'])
+        ->middleware('throttle:api-write')
         ->name('api.cards.store');
     Route::put('cards/{card}', [CardController::class, 'update'])
+        ->middleware('throttle:api-write')
         ->name('api.cards.update');
     Route::delete('cards/{card}', [CardController::class, 'destroy'])
+        ->middleware('throttle:api-write')
         ->name('api.cards.destroy');
     Route::patch('cards/{card}/move', [CardController::class, 'move'])
+        ->middleware('throttle:api-write')
         ->name('api.cards.move');
 
     Route::get('audit-logs', [App\Http\Controllers\Api\AuditLogController::class, 'index'])
+        ->middleware('throttle:sensitive')
         ->name('api.audit-logs.index');
 
     // Notifications
