@@ -1,23 +1,23 @@
 name: Columns
 description: |-
 
-  Gestion des colonnes dans un board
+  APIs for managing columns within boards
 endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: 'api/boards/{board_id}/columns'
+      - GET
+    uri: 'api/columns/{id}'
     metadata:
       custom: []
       groupName: Columns
       groupDescription: |-
 
-        Gestion des colonnes dans un board
+        APIs for managing columns within boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Créer une colonne'
-      description: 'Ajoute une nouvelle colonne à un board.'
+      title: 'Get a column'
+      description: 'Returns a single column with its cards.'
       authenticated: true
       deprecated: false
     headers:
@@ -25,10 +25,10 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      board_id:
+      id:
         custom: []
-        name: board_id
-        description: 'The ID of the board.'
+        name: id
+        description: 'The ID of the column.'
         required: true
         example: 1
         type: integer
@@ -36,10 +36,10 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      board:
+      column:
         custom: []
-        name: board
-        description: "L'ID du board."
+        name: column
+        description: 'The column ID.'
         required: true
         example: 1
         type: integer
@@ -48,24 +48,12 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      board_id: 1
-      board: 1
+      id: 1
+      column: 1
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters:
-      name:
-        custom: []
-        name: name
-        description: 'Le nom de la colonne.'
-        required: true
-        example: 'To Do'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      name: 'To Do'
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses:
       -
@@ -78,12 +66,133 @@ endpoints:
               "name": "To Do",
               "position": 0,
               "board_id": 1,
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T10:30:00.000000Z"
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z",
+              "cards": [
+                {
+                  "id": 1,
+                  "title": "Task 1",
+                  "description": "First task",
+                  "position": 0
+                }
+              ]
             }
           }
         headers: []
         description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Column not found."}'
+        headers: []
+        description: 'not found'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/boards/{board_id}/columns'
+    metadata:
+      custom: []
+      groupName: Columns
+      groupDescription: |-
+
+        APIs for managing columns within boards
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a column'
+      description: 'Creates a new column in the specified board. Position is auto-assigned.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      board_id:
+        custom: []
+        name: board_id
+        description: 'The ID of the board.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      board:
+        custom: []
+        name: board
+        description: 'The board ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      board_id: 16
+      board: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: 'The name of the column.'
+        required: true
+        example: 'In Progress'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      name: 'In Progress'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "data": {
+              "id": 2,
+              "name": "In Progress",
+              "position": 3,
+              "board_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z"
+            }
+          }
+        headers: []
+        description: created
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+      -
+        custom: []
+        status: 422
+        content: '{"message": "The name field is required.", "errors": {"name": ["The name field is required."]}}'
+        headers: []
+        description: 'validation error'
     responseFields: []
     auth:
       - headers
@@ -96,17 +205,17 @@ endpoints:
     custom: []
     httpMethods:
       - PUT
-    uri: 'api/columns/{column_id}'
+    uri: 'api/columns/{id}'
     metadata:
       custom: []
       groupName: Columns
       groupDescription: |-
 
-        Gestion des colonnes dans un board
+        APIs for managing columns within boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Modifier une colonne'
-      description: "Met à jour le nom ou la position d'une colonne."
+      title: 'Update a column'
+      description: 'Updates the column name and/or position.'
       authenticated: true
       deprecated: false
     headers:
@@ -114,9 +223,9 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      column_id:
+      id:
         custom: []
-        name: column_id
+        name: id
         description: 'The ID of the column.'
         required: true
         example: 1
@@ -128,7 +237,7 @@ endpoints:
       column:
         custom: []
         name: column
-        description: "L'ID de la colonne."
+        description: 'The column ID.'
         required: true
         example: 1
         type: integer
@@ -137,7 +246,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      column_id: 1
+      id: 1
       column: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -145,9 +254,9 @@ endpoints:
       name:
         custom: []
         name: name
-        description: 'Le nouveau nom.'
+        description: 'The new name for the column.'
         required: false
-        example: 'In Progress'
+        example: Done
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -156,17 +265,17 @@ endpoints:
       position:
         custom: []
         name: position
-        description: 'La nouvelle position.'
+        description: 'The new position (0-based index).'
         required: false
-        example: 1
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      name: 'In Progress'
-      position: 1
+      name: Done
+      position: 2
     fileParameters: []
     responses:
       -
@@ -176,15 +285,21 @@ endpoints:
           {
             "data": {
               "id": 1,
-              "name": "In Progress",
-              "position": 1,
+              "name": "Done",
+              "position": 2,
               "board_id": 1,
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T11:00:00.000000Z"
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T11:00:00.000000Z"
             }
           }
         headers: []
         description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
     responseFields: []
     auth:
       - headers
@@ -197,17 +312,17 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/columns/{column_id}'
+    uri: 'api/columns/{id}'
     metadata:
       custom: []
       groupName: Columns
       groupDescription: |-
 
-        Gestion des colonnes dans un board
+        APIs for managing columns within boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Supprimer une colonne'
-      description: 'Supprime une colonne et toutes ses cartes.'
+      title: 'Delete a column'
+      description: 'Deletes the column and all its cards. Admin only.'
       authenticated: true
       deprecated: false
     headers:
@@ -215,9 +330,9 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      column_id:
+      id:
         custom: []
-        name: column_id
+        name: id
         description: 'The ID of the column.'
         required: true
         example: 1
@@ -229,7 +344,7 @@ endpoints:
       column:
         custom: []
         name: column
-        description: "L'ID de la colonne."
+        description: 'The column ID.'
         required: true
         example: 1
         type: integer
@@ -238,7 +353,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      column_id: 1
+      id: 1
       column: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -251,7 +366,13 @@ endpoints:
         status: 204
         content: ''
         headers: []
-        description: success
+        description: deleted
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
     responseFields: []
     auth:
       - headers

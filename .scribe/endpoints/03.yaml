@@ -1,0 +1,147 @@
+name: 'Audit Logs'
+description: |-
+
+  APIs for viewing audit logs (Admin only)
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/audit-logs
+    metadata:
+      custom: []
+      groupName: 'Audit Logs'
+      groupDescription: |-
+
+        APIs for viewing audit logs (Admin only)
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List audit logs'
+      description: |-
+        Returns paginated audit logs. Requires admin role.
+        This endpoint is rate-limited to 10 requests per minute.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      user_id:
+        custom: []
+        name: user_id
+        description: 'Filter by user who performed the action.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      model_type:
+        custom: []
+        name: model_type
+        description: 'Filter by model type (Board, Column, Card).'
+        required: false
+        example: Board
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      action:
+        custom: []
+        name: action
+        description: 'Filter by action type (created, updated, deleted).'
+        required: false
+        example: created
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'The page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      user_id: 1
+      model_type: Board
+      action: created
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "description": "Board created",
+                "subject_type": "App\\Models\\Board",
+                "subject_id": 1,
+                "causer_type": "App\\Models\\User",
+                "causer_id": 1,
+                "properties": {
+                  "attributes": {
+                    "name": "New Board",
+                    "description": "Board description"
+                  }
+                },
+                "created_at": "2026-01-25T10:00:00.000000Z",
+                "causer": {
+                  "id": 1,
+                  "name": "Admin User"
+                }
+              }
+            ],
+            "links": {
+              "first": "http://localhost/api/audit-logs?page=1",
+              "last": "http://localhost/api/audit-logs?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": 1,
+              "last_page": 1,
+              "per_page": 50,
+              "to": 1,
+              "total": 1
+            }
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+      -
+        custom: []
+        status: 403
+        content: '{"message": "Accès réservé aux administrateurs."}'
+        headers: []
+        description: forbidden
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null

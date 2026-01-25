@@ -22,6 +22,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         ->middleware('throttle:api-write')
         ->name('api.boards.destroy');
 
+    // Column - Lecture
+    Route::get('columns/{column}', [ColumnController::class, 'show'])
+        ->name('api.columns.show');
+
     // Column - Écriture
     Route::post('boards/{board}/columns', [ColumnController::class, 'store'])
         ->middleware('throttle:api-write')
@@ -32,6 +36,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::delete('columns/{column}', [ColumnController::class, 'destroy'])
         ->middleware('throttle:api-write')
         ->name('api.columns.destroy');
+
+    // Cards - Lecture
+    Route::get('columns/{column}/cards', [CardController::class, 'index'])
+        ->name('api.cards.index');
+    Route::get('cards/{card}', [CardController::class, 'show'])
+        ->name('api.cards.show');
 
     // Cards - Écriture
     Route::post('columns/{column}/cards', [CardController::class, 'store'])

@@ -10,10 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use ParagonIE\CipherSweet\BlindIndex;
+use ParagonIE\CipherSweet\EncryptedRow;
+use Spatie\LaravelCipherSweet\Concerns\UsesCipherSweet;
+use Spatie\LaravelCipherSweet\Contracts\CipherSweetEncrypted;
 
-class Board extends Model
+class Board extends Model implements CipherSweetEncrypted
 {
-    use HasFactory, ClearsCache, LogsActivity;
+    use HasFactory, ClearsCache, LogsActivity, UsesCipherSweet;
     protected $fillable = ['name', 'description', 'user_id'];
 
     /**
@@ -26,6 +30,14 @@ class Board extends Model
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->setDescriptionForEvent(fn(string $eventName) => "Board {$eventName}");
+    }
+
+    public static function configureCipherSweet(EncryptedRow $encryptedRow): void
+    {
+        $encryptedRow
+            ->addField('name')
+            ->addBlindIndex('name', new BlindIndex('name_index'))
+            ->addOptionalTextField('description');
     }
     protected static function booted(): void
     {

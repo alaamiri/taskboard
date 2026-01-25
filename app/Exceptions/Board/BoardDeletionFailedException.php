@@ -6,11 +6,16 @@ class BoardDeletionFailedException extends \Exception
 {
     protected string $errorType = 'board_not_deleted';
 
+    protected array $context = [];
+
     public function __construct(int $boardId)
     {
-        parent::__construct(
-            "Board with ID {$boardId} not deleted.",
-            ['board_id' => $boardId]
-        );
+        $this->context = ['board_id' => $boardId];
+        parent::__construct("Board with ID {$boardId} not deleted.");
+    }
+
+    public function context(): array
+    {
+        return $this->context;
     }
 }

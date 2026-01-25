@@ -4,6 +4,8 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
+use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
+
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -32,3 +34,4 @@ Schedule::command('audit:clean --days=365')
 
 //Laravel Health heartbeat
 Schedule::command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+Schedule::command(DispatchQueueCheckJobsCommand::class)->everyMinute();

@@ -25,6 +25,65 @@ class ColumnTest extends ApiTestCase
 
     /*
     |--------------------------------------------------------------------------
+    | SHOW - Afficher une colonne
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_guest_cannot_view_column(): void
+    {
+        $column = Column::factory()->create(['board_id' => $this->board->id]);
+
+        $response = $this->getJson("/api/columns/{$column->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_user_can_view_column_in_own_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $column = Column::factory()->create(['board_id' => $this->board->id]);
+
+        $response = $this->getJson("/api/columns/{$column->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => ['id', 'name', 'position', 'board_id', 'created_at', 'updated_at', 'cards']
+            ])
+            ->assertJsonPath('data.id', $column->id);
+    }
+
+    public function test_user_cannot_view_column_in_others_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $otherUser = User::factory()->create();
+        $otherBoard = Board::factory()->create(['user_id' => $otherUser->id]);
+        $column = Column::factory()->create(['board_id' => $otherBoard->id]);
+
+        $response = $this->getJson("/api/columns/{$column->id}");
+
+        $response->assertStatus(403);
+    }
+
+    public function test_column_show_includes_cards(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $column = Column::factory()->create(['board_id' => $this->board->id]);
+        $column->cards()->createMany([
+            ['title' => 'Card 1', 'position' => 0],
+            ['title' => 'Card 2', 'position' => 1],
+        ]);
+
+        $response = $this->getJson("/api/columns/{$column->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'data.cards');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | STORE - Créer une colonne
     |--------------------------------------------------------------------------
     */

@@ -9,6 +9,38 @@ use App\Models\User;
 class CardPolicy
 {
     /**
+     * L'utilisateur peut-il lister les cartes d'une colonne ?
+     */
+    public function viewAny(User $user, Column $column): bool
+    {
+        if (!$user->hasPermissionTo('cards.view')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return $user->id === $column->board->user_id;
+    }
+
+    /**
+     * L'utilisateur peut-il voir cette carte ?
+     */
+    public function view(User $user, Card $card): bool
+    {
+        if (!$user->hasPermissionTo('cards.view')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return $user->id === $card->column->board->user_id;
+    }
+
+    /**
      * L'utilisateur peut-il créer une carte dans cette colonne ?
      */
     public function create(User $user, Column $column): bool

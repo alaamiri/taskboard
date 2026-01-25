@@ -1,0 +1,346 @@
+name: Notifications
+description: |-
+
+  APIs for managing user notifications
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/notifications
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: |-
+
+        APIs for managing user notifications
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List all notifications'
+      description: 'Returns paginated notifications for the authenticated user.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: 'The page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "type": "App\\Notifications\\CardMovedNotification",
+                "data": {
+                  "card_id": 1,
+                  "card_title": "Task 1",
+                  "moved_by": "John Doe",
+                  "from_column": "To Do",
+                  "to_column": "Done"
+                },
+                "read_at": null,
+                "created_at": "2026-01-25T10:00:00.000000Z"
+              }
+            ],
+            "links": {
+              "first": "http://localhost/api/notifications?page=1",
+              "last": "http://localhost/api/notifications?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": 1,
+              "last_page": 1,
+              "per_page": 20,
+              "to": 1,
+              "total": 1
+            }
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/notifications/unread
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: |-
+
+        APIs for managing user notifications
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List unread notifications'
+      description: 'Returns all unread notifications for the authenticated user.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "type": "App\\Notifications\\CardMovedNotification",
+                "data": {
+                  "card_id": 1,
+                  "card_title": "Task 1",
+                  "moved_by": "John Doe",
+                  "from_column": "To Do",
+                  "to_column": "Done"
+                },
+                "read_at": null,
+                "created_at": "2026-01-25T10:00:00.000000Z"
+              }
+            ]
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/notifications/{id}/read'
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: |-
+
+        APIs for managing user notifications
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Mark notification as read'
+      description: 'Marks a specific notification as read.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The notification UUID.'
+        required: true
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 550e8400-e29b-41d4-a716-446655440000
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: ''
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Notification not found."}'
+        headers: []
+        description: 'not found'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/notifications/read-all
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: |-
+
+        APIs for managing user notifications
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Mark all notifications as read'
+      description: 'Marks all unread notifications as read for the authenticated user.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: ''
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/notifications/{id}'
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: |-
+
+        APIs for managing user notifications
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a notification'
+      description: 'Permanently deletes a notification.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The notification UUID.'
+        required: true
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 550e8400-e29b-41d4-a716-446655440000
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: ''
+        headers: []
+        description: deleted
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Notification not found."}'
+        headers: []
+        description: 'not found'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null

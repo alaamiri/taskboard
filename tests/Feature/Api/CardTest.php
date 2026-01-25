@@ -27,6 +27,88 @@ class CardTest extends ApiTestCase
 
     /*
     |--------------------------------------------------------------------------
+    | INDEX - Lister les cartes d'une colonne
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_guest_cannot_list_cards(): void
+    {
+        $response = $this->getJson("/api/columns/{$this->column->id}/cards");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_user_can_list_cards_in_own_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        Card::factory()->count(3)->create(['column_id' => $this->column->id]);
+
+        $response = $this->getJson("/api/columns/{$this->column->id}/cards");
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_user_cannot_list_cards_in_others_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $otherUser = User::factory()->create();
+        $otherBoard = Board::factory()->create(['user_id' => $otherUser->id]);
+        $otherColumn = Column::factory()->create(['board_id' => $otherBoard->id]);
+
+        $response = $this->getJson("/api/columns/{$otherColumn->id}/cards");
+
+        $response->assertStatus(403);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SHOW - Afficher une carte
+    |--------------------------------------------------------------------------
+    */
+
+    public function test_guest_cannot_view_card(): void
+    {
+        $card = Card::factory()->create(['column_id' => $this->column->id]);
+
+        $response = $this->getJson("/api/cards/{$card->id}");
+
+        $response->assertStatus(401);
+    }
+
+    public function test_user_can_view_card_in_own_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $card = Card::factory()->create(['column_id' => $this->column->id]);
+
+        $response = $this->getJson("/api/cards/{$card->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => ['id', 'title', 'description', 'position', 'column_id', 'created_at', 'updated_at']
+            ])
+            ->assertJsonPath('data.id', $card->id);
+    }
+
+    public function test_user_cannot_view_card_in_others_board(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $otherUser = User::factory()->create();
+        $otherBoard = Board::factory()->create(['user_id' => $otherUser->id]);
+        $otherColumn = Column::factory()->create(['board_id' => $otherBoard->id]);
+        $card = Card::factory()->create(['column_id' => $otherColumn->id]);
+
+        $response = $this->getJson("/api/cards/{$card->id}");
+
+        $response->assertStatus(403);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | STORE - Créer une carte
     |--------------------------------------------------------------------------
     */
@@ -56,10 +138,10 @@ class CardTest extends ApiTestCase
             ->assertJsonPath('data.title', 'Ma carte')
             ->assertJsonPath('data.position', 0);
 
-        $this->assertDatabaseHas('cards', [
-            'title' => 'Ma carte',
-            'column_id' => $this->column->id,
-        ]);
+        // Title is encrypted in the database, so we verify via the model
+        $card = Card::where('column_id', $this->column->id)->first();
+        $this->assertNotNull($card);
+        $this->assertEquals('Ma carte', $card->title);
     }
 
     public function test_card_position_increments_automatically(): void

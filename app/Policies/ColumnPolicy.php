@@ -9,6 +9,22 @@ use App\Models\User;
 class ColumnPolicy
 {
     /**
+     * L'utilisateur peut-il voir cette colonne ?
+     */
+    public function view(User $user, Column $column): bool
+    {
+        if (!$user->hasPermissionTo('columns.view')) {
+            return false;
+        }
+
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return $user->id === $column->board->user_id;
+    }
+
+    /**
      * L'utilisateur peut-il créer une colonne dans ce board ?
      */
     public function create(User $user, Board $board): bool

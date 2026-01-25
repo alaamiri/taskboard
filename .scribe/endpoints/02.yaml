@@ -1,23 +1,23 @@
 name: Cards
 description: |-
 
-  Gestion des cartes (tâches) dans les colonnes
+  APIs for managing cards within columns
 endpoints:
   -
     custom: []
     httpMethods:
-      - POST
+      - GET
     uri: 'api/columns/{column_id}/cards'
     metadata:
       custom: []
       groupName: Cards
       groupDescription: |-
 
-        Gestion des cartes (tâches) dans les colonnes
+        APIs for managing cards within columns
       subgroup: ''
       subgroupDescription: ''
-      title: 'Créer une carte'
-      description: 'Ajoute une nouvelle carte à une colonne.'
+      title: 'List cards in a column'
+      description: 'Returns all cards in the specified column, ordered by position.'
       authenticated: true
       deprecated: false
     headers:
@@ -39,7 +39,195 @@ endpoints:
       column:
         custom: []
         name: column
-        description: "L'ID de la colonne."
+        description: 'The column ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      column_id: 1
+      column: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "title": "Task 1",
+                "description": "First task description",
+                "position": 0,
+                "column_id": 1,
+                "user_id": 1,
+                "created_at": "2026-01-25T10:00:00.000000Z",
+                "updated_at": "2026-01-25T10:00:00.000000Z"
+              }
+            ]
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Column not found."}'
+        headers: []
+        description: 'not found'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/cards/{id}'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        APIs for managing cards within columns
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get a card'
+      description: 'Returns a single card with its associated user.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the card.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      card:
+        custom: []
+        name: card
+        description: 'The card ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+      card: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "title": "Task 1",
+              "description": "First task description",
+              "position": 0,
+              "column_id": 1,
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z",
+              "user": {
+                "id": 1,
+                "name": "John Doe"
+              }
+            }
+          }
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Card not found."}'
+        headers: []
+        description: 'not found'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/columns/{column_id}/cards'
+    metadata:
+      custom: []
+      groupName: Cards
+      groupDescription: |-
+
+        APIs for managing cards within columns
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a card'
+      description: 'Creates a new card in the specified column. Position is auto-assigned.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      column_id:
+        custom: []
+        name: column_id
+        description: 'The ID of the column.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      column:
+        custom: []
+        name: column
+        description: 'The column ID.'
         required: true
         example: 1
         type: integer
@@ -56,9 +244,9 @@ endpoints:
       title:
         custom: []
         name: title
-        description: 'Le titre de la carte.'
+        description: 'The title of the card.'
         required: true
-        example: "Implémenter l'API"
+        example: 'New Task'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -67,36 +255,49 @@ endpoints:
       description:
         custom: []
         name: description
-        description: 'La description de la carte.'
+        description: 'optional The card description.'
         required: false
-        example: 'Créer les endpoints REST'
+        example: 'Task details here'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: "Implémenter l'API"
-      description: 'Créer les endpoints REST'
+      title: 'New Task'
+      description: 'Task details here'
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
+        status: 201
         content: |-
           {
             "data": {
-              "id": 1,
-              "title": "Implémenter l'API",
-              "description": "Créer les endpoints REST",
-              "position": 0,
+              "id": 2,
+              "title": "New Task",
+              "description": "Task details here",
+              "position": 1,
               "column_id": 1,
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T10:30:00.000000Z"
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z"
             }
           }
         headers: []
-        description: success
+        description: created
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+      -
+        custom: []
+        status: 422
+        content: '{"message": "The title field is required.", "errors": {"title": ["The title field is required."]}}'
+        headers: []
+        description: 'validation error'
     responseFields: []
     auth:
       - headers
@@ -109,17 +310,17 @@ endpoints:
     custom: []
     httpMethods:
       - PUT
-    uri: 'api/cards/{card_id}'
+    uri: 'api/cards/{id}'
     metadata:
       custom: []
       groupName: Cards
       groupDescription: |-
 
-        Gestion des cartes (tâches) dans les colonnes
+        APIs for managing cards within columns
       subgroup: ''
       subgroupDescription: ''
-      title: 'Modifier une carte'
-      description: "Met à jour le titre ou la description d'une carte."
+      title: 'Update a card'
+      description: 'Updates the card title and/or description.'
       authenticated: true
       deprecated: false
     headers:
@@ -127,12 +328,12 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      card_id:
+      id:
         custom: []
-        name: card_id
+        name: id
         description: 'The ID of the card.'
         required: true
-        example: 34
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -141,7 +342,7 @@ endpoints:
       card:
         custom: []
         name: card
-        description: "L'ID de la carte."
+        description: 'The card ID.'
         required: true
         example: 1
         type: integer
@@ -150,7 +351,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      card_id: 34
+      id: 16
       card: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -158,9 +359,9 @@ endpoints:
       title:
         custom: []
         name: title
-        description: 'Le nouveau titre.'
+        description: 'The new title for the card.'
         required: false
-        example: 'Nouveau titre'
+        example: 'Updated Task'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -169,17 +370,17 @@ endpoints:
       description:
         custom: []
         name: description
-        description: 'La nouvelle description.'
+        description: 'The new description.'
         required: false
-        example: 'Nouvelle description'
+        example: 'Updated description'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: 'Nouveau titre'
-      description: 'Nouvelle description'
+      title: 'Updated Task'
+      description: 'Updated description'
     fileParameters: []
     responses:
       -
@@ -189,16 +390,23 @@ endpoints:
           {
             "data": {
               "id": 1,
-              "title": "Nouveau titre",
-              "description": "Nouvelle description",
+              "title": "Updated Task",
+              "description": "Updated description",
               "position": 0,
               "column_id": 1,
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T11:00:00.000000Z"
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T11:00:00.000000Z"
             }
           }
         headers: []
         description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
     responseFields: []
     auth:
       - headers
@@ -211,17 +419,17 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/cards/{card_id}'
+    uri: 'api/cards/{id}'
     metadata:
       custom: []
       groupName: Cards
       groupDescription: |-
 
-        Gestion des cartes (tâches) dans les colonnes
+        APIs for managing cards within columns
       subgroup: ''
       subgroupDescription: ''
-      title: 'Supprimer une carte'
-      description: 'Supprime définitivement une carte.'
+      title: 'Delete a card'
+      description: 'Deletes the card permanently.'
       authenticated: true
       deprecated: false
     headers:
@@ -229,12 +437,12 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      card_id:
+      id:
         custom: []
-        name: card_id
+        name: id
         description: 'The ID of the card.'
         required: true
-        example: 34
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -243,7 +451,7 @@ endpoints:
       card:
         custom: []
         name: card
-        description: "L'ID de la carte."
+        description: 'The card ID.'
         required: true
         example: 1
         type: integer
@@ -252,7 +460,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      card_id: 34
+      id: 16
       card: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -265,7 +473,13 @@ endpoints:
         status: 204
         content: ''
         headers: []
-        description: success
+        description: deleted
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
     responseFields: []
     auth:
       - headers
@@ -284,13 +498,11 @@ endpoints:
       groupName: Cards
       groupDescription: |-
 
-        Gestion des cartes (tâches) dans les colonnes
+        APIs for managing cards within columns
       subgroup: ''
       subgroupDescription: ''
-      title: 'Déplacer une carte'
-      description: |-
-        Déplace une carte vers une autre colonne et/ou position.
-        Déclenche un événement WebSocket pour la synchronisation temps réel.
+      title: 'Move a card'
+      description: 'Moves a card to a different column and/or position. Triggers notifications to board owner.'
       authenticated: true
       deprecated: false
     headers:
@@ -303,7 +515,7 @@ endpoints:
         name: card_id
         description: 'The ID of the card.'
         required: true
-        example: 34
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -312,7 +524,7 @@ endpoints:
       card:
         custom: []
         name: card
-        description: "L'ID de la carte."
+        description: 'The card ID.'
         required: true
         example: 1
         type: integer
@@ -321,7 +533,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      card_id: 34
+      card_id: 16
       card: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -329,7 +541,7 @@ endpoints:
       column_id:
         custom: []
         name: column_id
-        description: "L'ID de la colonne de destination."
+        description: 'The target column ID.'
         required: true
         example: 2
         type: integer
@@ -340,7 +552,7 @@ endpoints:
       position:
         custom: []
         name: position
-        description: 'La nouvelle position dans la colonne.'
+        description: 'The new position (0-based index).'
         required: true
         example: 0
         type: integer
@@ -360,12 +572,13 @@ endpoints:
           {
             "data": {
               "id": 1,
-              "title": "Ma carte",
-              "description": "Description",
+              "title": "Task 1",
+              "description": "First task description",
               "position": 0,
               "column_id": 2,
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T11:00:00.000000Z"
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T11:00:00.000000Z"
             }
           }
         headers: []
@@ -373,12 +586,15 @@ endpoints:
       -
         custom: []
         status: 403
-        content: |-
-          {
-            "message": "Cannot move card to another board"
-          }
+        content: '{"message": "This action is unauthorized."}'
         headers: []
-        description: 'autre board'
+        description: forbidden
+      -
+        custom: []
+        status: 422
+        content: '{"message": "The column_id field is required.", "errors": {"column_id": ["The column_id field is required."]}}'
+        headers: []
+        description: 'validation error'
     responseFields: []
     auth:
       - headers

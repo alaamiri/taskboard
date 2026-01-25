@@ -94,10 +94,10 @@ class BoardTest extends ApiTestCase
             ->assertJsonPath('data.name', 'Mon Board')
             ->assertJsonPath('data.description', 'Description du board');
 
-        $this->assertDatabaseHas('boards', [
-            'name' => 'Mon Board',
-            'user_id' => $this->user->id,
-        ]);
+        // Verify through model (name is encrypted with CipherSweet)
+        $board = Board::where('user_id', $this->user->id)->first();
+        $this->assertNotNull($board);
+        $this->assertEquals('Mon Board', $board->name);
     }
 
     public function test_user_can_create_board_without_description(): void
@@ -220,10 +220,9 @@ class BoardTest extends ApiTestCase
             ->assertJsonPath('data.name', 'Nouveau nom')
             ->assertJsonPath('data.description', 'Nouvelle description');
 
-        $this->assertDatabaseHas('boards', [
-            'id' => $board->id,
-            'name' => 'Nouveau nom',
-        ]);
+        // Verify through model (name is encrypted with CipherSweet)
+        $board->refresh();
+        $this->assertEquals('Nouveau nom', $board->name);
     }
 
     public function test_user_can_update_board_partially(): void

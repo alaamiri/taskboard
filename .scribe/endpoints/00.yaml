@@ -1,7 +1,7 @@
 name: Boards
 description: |-
 
-  Gestion des boards (tableaux Kanban)
+  APIs for managing Kanban boards
 endpoints:
   -
     custom: []
@@ -13,11 +13,13 @@ endpoints:
       groupName: Boards
       groupDescription: |-
 
-        Gestion des boards (tableaux Kanban)
+        APIs for managing Kanban boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Liste des boards'
-      description: "Récupère tous les boards de l'utilisateur connecté."
+      title: 'List all boards'
+      description: |-
+        Returns all boards accessible to the authenticated user.
+        Admin users see all boards, viewers see only their own.
       authenticated: true
       deprecated: false
     headers:
@@ -40,16 +42,23 @@ endpoints:
             "data": [
               {
                 "id": 1,
-                "name": "Mon Projet",
-                "description": "Description du projet",
-                "created_at": "2024-01-15T10:30:00.000000Z",
-                "updated_at": "2024-01-15T10:30:00.000000Z",
+                "name": "Project Alpha",
+                "description": "Main project board",
+                "user_id": 1,
+                "created_at": "2026-01-25T10:00:00.000000Z",
+                "updated_at": "2026-01-25T10:00:00.000000Z",
                 "columns_count": 3
               }
             ]
           }
         headers: []
         description: success
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Unauthenticated."}'
+        headers: []
+        description: unauthenticated
     responseFields: []
     auth:
       - headers
@@ -68,11 +77,11 @@ endpoints:
       groupName: Boards
       groupDescription: |-
 
-        Gestion des boards (tableaux Kanban)
+        APIs for managing Kanban boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Créer un board'
-      description: "Crée un nouveau board pour l'utilisateur connecté."
+      title: 'Create a board'
+      description: 'Creates a new board with 3 default columns: "À faire", "En cours", "Terminé".'
       authenticated: true
       deprecated: false
     headers:
@@ -87,9 +96,9 @@ endpoints:
       name:
         custom: []
         name: name
-        description: 'Le nom du board.'
+        description: 'The name of the board.'
         required: true
-        example: 'Mon Projet'
+        example: 'Project Alpha'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -98,44 +107,39 @@ endpoints:
       description:
         custom: []
         name: description
-        description: 'La description du board.'
+        description: 'optional The board description.'
         required: false
-        example: 'Description de mon projet'
+        example: 'Main project board'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      name: 'Mon Projet'
-      description: 'Description de mon projet'
+      name: 'Project Alpha'
+      description: 'Main project board'
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
+        status: 201
         content: |-
           {
             "data": {
               "id": 1,
-              "name": "Mon Projet",
-              "description": "Description de mon projet",
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T10:30:00.000000Z"
+              "name": "Project Alpha",
+              "description": "Main project board",
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z"
             }
           }
         headers: []
-        description: success
+        description: created
       -
         custom: []
         status: 422
-        content: |-
-          {
-            "message": "The name field is required.",
-            "errors": {
-              "name": ["The name field is required."]
-            }
-          }
+        content: '{"message": "The name field is required.", "errors": {"name": ["The name field is required."]}}'
         headers: []
         description: 'validation error'
     responseFields: []
@@ -156,11 +160,11 @@ endpoints:
       groupName: Boards
       groupDescription: |-
 
-        Gestion des boards (tableaux Kanban)
+        APIs for managing Kanban boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Afficher un board'
-      description: 'Récupère un board avec ses colonnes et cartes.'
+      title: 'Get a board'
+      description: 'Returns a single board with its columns and cards.'
       authenticated: true
       deprecated: false
     headers:
@@ -173,7 +177,7 @@ endpoints:
         name: id
         description: 'The ID of the board.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -182,7 +186,7 @@ endpoints:
       board:
         custom: []
         name: board
-        description: "L'ID du board."
+        description: 'The board ID.'
         required: true
         example: 1
         type: integer
@@ -191,7 +195,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       board: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -206,10 +210,11 @@ endpoints:
           {
             "data": {
               "id": 1,
-              "name": "Mon Projet",
-              "description": "Description",
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T10:30:00.000000Z",
+              "name": "Project Alpha",
+              "description": "Main project board",
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T10:00:00.000000Z",
               "columns": [
                 {
                   "id": 1,
@@ -225,19 +230,13 @@ endpoints:
       -
         custom: []
         status: 403
-        content: |-
-          {
-            "message": "This action is unauthorized."
-          }
+        content: '{"message": "This action is unauthorized."}'
         headers: []
         description: forbidden
       -
         custom: []
         status: 404
-        content: |-
-          {
-            "message": "No query results for model [App\\Models\\Board] 999"
-          }
+        content: '{"message": "Board not found."}'
         headers: []
         description: 'not found'
     responseFields: []
@@ -259,11 +258,11 @@ endpoints:
       groupName: Boards
       groupDescription: |-
 
-        Gestion des boards (tableaux Kanban)
+        APIs for managing Kanban boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Modifier un board'
-      description: "Met à jour les informations d'un board."
+      title: 'Update a board'
+      description: 'Updates the board name and/or description.'
       authenticated: true
       deprecated: false
     headers:
@@ -276,7 +275,7 @@ endpoints:
         name: id
         description: 'The ID of the board.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -285,7 +284,7 @@ endpoints:
       board:
         custom: []
         name: board
-        description: "L'ID du board."
+        description: 'The board ID.'
         required: true
         example: 1
         type: integer
@@ -294,7 +293,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       board: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -302,9 +301,9 @@ endpoints:
       name:
         custom: []
         name: name
-        description: 'Le nouveau nom du board.'
+        description: 'The new name for the board.'
         required: false
-        example: 'Nouveau Nom'
+        example: 'Updated Project Name'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -313,17 +312,17 @@ endpoints:
       description:
         custom: []
         name: description
-        description: 'La nouvelle description.'
+        description: 'The new description.'
         required: false
-        example: 'Nouvelle description'
+        example: 'Updated description'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      name: 'Nouveau Nom'
-      description: 'Nouvelle description'
+      name: 'Updated Project Name'
+      description: 'Updated description'
     fileParameters: []
     responses:
       -
@@ -333,14 +332,21 @@ endpoints:
           {
             "data": {
               "id": 1,
-              "name": "Nouveau Nom",
-              "description": "Nouvelle description",
-              "created_at": "2024-01-15T10:30:00.000000Z",
-              "updated_at": "2024-01-15T11:00:00.000000Z"
+              "name": "Updated Project Name",
+              "description": "Updated description",
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T11:00:00.000000Z"
             }
           }
         headers: []
         description: success
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
     responseFields: []
     auth:
       - headers
@@ -359,11 +365,11 @@ endpoints:
       groupName: Boards
       groupDescription: |-
 
-        Gestion des boards (tableaux Kanban)
+        APIs for managing Kanban boards
       subgroup: ''
       subgroupDescription: ''
-      title: 'Supprimer un board'
-      description: 'Supprime un board et toutes ses colonnes et cartes.'
+      title: 'Delete a board'
+      description: 'Deletes the board and all its columns and cards. Admin only.'
       authenticated: true
       deprecated: false
     headers:
@@ -376,7 +382,7 @@ endpoints:
         name: id
         description: 'The ID of the board.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -385,7 +391,7 @@ endpoints:
       board:
         custom: []
         name: board
-        description: "L'ID du board."
+        description: 'The board ID.'
         required: true
         example: 1
         type: integer
@@ -394,7 +400,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       board: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -407,14 +413,118 @@ endpoints:
         status: 204
         content: ''
         headers: []
+        description: deleted
+      -
+        custom: []
+        status: 403
+        content: '{"message": "This action is unauthorized."}'
+        headers: []
+        description: forbidden
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer Bearer {token}'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/boards/{id}'
+    metadata:
+      custom: []
+      groupName: Boards
+      groupDescription: |-
+
+        APIs for managing Kanban boards
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update a board'
+      description: 'Updates the board name and/or description.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {token}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the board.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      board:
+        custom: []
+        name: board
+        description: 'The board ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 16
+      board: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: 'The new name for the board.'
+        required: false
+        example: 'Updated Project Name'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      description:
+        custom: []
+        name: description
+        description: 'The new description.'
+        required: false
+        example: 'Updated description'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      name: 'Updated Project Name'
+      description: 'Updated description'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "name": "Updated Project Name",
+              "description": "Updated description",
+              "user_id": 1,
+              "created_at": "2026-01-25T10:00:00.000000Z",
+              "updated_at": "2026-01-25T11:00:00.000000Z"
+            }
+          }
+        headers: []
         description: success
       -
         custom: []
         status: 403
-        content: |-
-          {
-            "message": "This action is unauthorized."
-          }
+        content: '{"message": "This action is unauthorized."}'
         headers: []
         description: forbidden
     responseFields: []

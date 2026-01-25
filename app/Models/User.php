@@ -9,10 +9,14 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-class User extends Authenticatable
+use ParagonIE\CipherSweet\BlindIndex;
+use ParagonIE\CipherSweet\EncryptedRow;
+use Spatie\LaravelCipherSweet\Concerns\UsesCipherSweet;
+use Spatie\LaravelCipherSweet\Contracts\CipherSweetEncrypted;
+class User extends Authenticatable implements CipherSweetEncrypted
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, UsesCipherSweet;
 
     /**
      * The attributes that are mass assignable.
@@ -63,7 +67,18 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::created(function (User $user) {
-            $user->assignRole('viewer');
+            if (!$user->hasAnyRole(['admin', 'viewer'])) {
+                $user->assignRole('viewer');
+            }
         });
+    }
+
+    public static function configureCipherSweet(EncryptedRow $encryptedRow): void
+    {
+        $encryptedRow
+            ->addField('name')
+            ->addBlindIndex('name', new BlindIndex('name_index'))
+            ->addField('email')
+            ->addBlindIndex('email', new BlindIndex('email_index'));
     }
 }
